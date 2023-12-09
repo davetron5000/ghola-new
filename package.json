@@ -10,7 +10,10 @@
     "chokidar-cli": "^3.0.0",
     "ejs": "^3.1.9",
     "esbuild": "^0.19.5",
-    "http-server": "^14.1.1",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "hex-color-to-color-name": "^1.0.2",
     "melange-css": "^1.0.0-beta6"
   }
 }

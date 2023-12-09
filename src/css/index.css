@@ -1,5 +1,43 @@
 @import "melange-css/melange.css";
 
 :root {
-  --mg-ff-sans: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+  --mg-ff-sans: 'Helvetica Neue', Inter, Roboto, 'Nimbus Sans', sans-serif;
+  --mg-ff-serif: 'Baskerville', Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+  --mg-ff-mono: Courier, monospace;
+}
+
+input::-webkit-color-swatch-wrapper {
+  margin: 0;
+  padding: 0;
+}
+input::-webkit-color-swatch {
+  border-radius: 0;
+  border: none;
+}
+
+.lh-solid.f-1.h-2-lines {
+  height: calc(2 * var(--mg-fs-1) * var(--mg-lh-solid));
+}
+.lh-solid.f-1.h-1-line {
+  height: calc(var(--mg-fs-1) * var(--mg-lh-solid));
+}
+
+.shadow-button {
+  transform: translateX(-1px) translateY(-1px);
+  box-shadow: 1px 1px 2px 1px rgba( 0, 0, 0, 0.5 );
+}
+.shadow-button:active {
+  box-shadow: none;
+  transform: none;
+}
+.shadow-button:disabled {
+  box-shadow: none;
+  transform: none;
+  background: var(--mg-gray);
+  color: var(--mg-gray-lighter);
+  border-color: var(--mg-gray);
+  cursor: not-allowed;
+}
+.shadow-button:active:disabled {
+  box-shadow: none;
 }

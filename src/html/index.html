@@ -18,7 +18,7 @@
     </title>
     <link href="/css/styles.css" rel="stylesheet" />
     <script src="/js/main.js"></script>
-    <template id="g-hexcode">
+    <template id="g-hex-code">
       <code class="db w-100 black-ish tl f-1 fw-4 ff-mono ph-2 mv-2 h-1-line lh-solid">
         <slot name="code"></slot>
       </code>
@@ -36,20 +36,25 @@
         <label class="ma-0 pa-0 sr-only"></label>
         <g-color-swatch-input></g-color-swatch-input>
         <g-color-name></g-color-name>
-        <g-hexcode></g-hexcode>
-        <input type="reset" class="pointer db bg-gray-dark white-ish ba bc-black-ish hover-bg-black ttl f-1 br-1 ma-1 shadow-button" name="Reset"/>
+        <g-hex-code></g-hex-code>
+        <g-reset-button class="flex"></g-reset-button>
       </form>
+    </template>
+    <template id="g-reset-button">
+        <input type="reset"
+               class="pointer dib w-100 bg-gray-dark white-ish ba bc-black-ish hover-bg-black ttl f-1 br-1 ma-1 shadow-button"
+               name="Reset"/>
     </template>
   </head>
   <body class="ff-sans bg-white-ish black-ish">
     <div class="flex items-center justify-center ma-3 pa-3 bg-gray-lighter gap-2">
-      <g-editable-color-swatch description="red darkest"  hex-code="#220000"></g-editable-color-swatch>
+      <g-editable-color-swatch description="red darkest"  hex-code="#220000" editable="false"></g-editable-color-swatch>
       <g-editable-color-swatch description="red darker"   hex-code="#550000"></g-editable-color-swatch>
       <g-editable-color-swatch description="red dark"     hex-code="#AA0000"></g-editable-color-swatch>
       <g-editable-color-swatch description="red normal"   hex-code="#FF0000"></g-editable-color-swatch>
       <g-editable-color-swatch description="red light"    hex-code="#FF5555"></g-editable-color-swatch>
       <g-editable-color-swatch description="red lighter"  hex-code="#FFAAAA"></g-editable-color-swatch>
-      <g-editable-color-swatch description="red lightest" hex-code="#FFFCFC"></g-editable-color-swatch>
+      <g-editable-color-swatch description="red lightest" hex-code="#FFFCFC" editable="false"></g-editable-color-swatch>
     </div>
   </body>
 </html>

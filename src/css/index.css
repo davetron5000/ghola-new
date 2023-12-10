@@ -41,3 +41,6 @@ input::-webkit-color-swatch {
 .shadow-button:active:disabled {
   box-shadow: none;
 }
+input:disabled.pointer {
+  cursor: not-allowed;
+}

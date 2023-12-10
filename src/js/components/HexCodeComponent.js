@@ -1,36 +1,31 @@
 import HexCode from "../dataTypes/HexCode"
+import HasTemplate from "../brutaldom/HasTemplate"
+import HasAttributes from "../brutaldom/HasAttributes"
 
 class HexCodeComponent extends HTMLElement {
-  static observedAttributes = ["code"];
-
-  connectedCallback() {
-    this._readTemplateIfNeeded()
-    const node = this.templateContent.cloneNode(true)
-    if (node.childElementCount != 1) {
-      throw `<template> with id 'g-hexcode' has ${node.childElementCount} children, but must have exactly 1`
+  static observedAttributes = ["hex-code"];
+  static attributeListeners = {
+    "hex-code": {
+      klass: HexCode,
     }
-    this.$element = node.firstElementChild
-    this.$codeSlot = this.$element.querySelector("slot[name='code']")
-    if (!this.$codeSlot) {
-      throw `<template> is messed up - expected a <slot name='code'> but did not find one`
-    }
-
-    this.appendChild(node)
-    this._render()
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name == "code") {
-      const newCode = new HexCode(newValue)
-      this.hexCode = newCode
-    }
-    this._render()
+  connectedCallback() {
+    this.addNodeFromTemplate({
+      before: ({element}) => {
+        this.$codeSlot = element.querySelector("slot[name='code']")
+        if (!this.$codeSlot) {
+          throw `<template> is messed up - expected a <slot name='code'> but did not find one`
+        }
+      }
+    })
   }
 
   _render() {
     if (!this.$element) {
       return
     }
+    console.log(this.hexCode)
     if (this.hexCode) {
       this.$codeSlot.textContent = this.hexCode
     }
@@ -39,18 +34,11 @@ class HexCodeComponent extends HTMLElement {
     }
   }
 
-  _readTemplateIfNeeded() {
-    if (this.templateContent) {
-      return
-    }
-    const $template = document.getElementById("g-hexcode")
-    if (!$template) {
-      throw `Expected to find template with id 'g-hexcode' but none was found`
-    }
-    this.templateContent = $template.content
-  }
+  static tagName = "g-hex-code"
   static define() {
-    customElements.define("g-hexcode", HexCodeComponent);
+    customElements.define(this.tagName, HexCodeComponent);
   }
 }
+HasTemplate.mixInto(HexCodeComponent)
+HasAttributes.mixInto(HexCodeComponent)
 export default HexCodeComponent

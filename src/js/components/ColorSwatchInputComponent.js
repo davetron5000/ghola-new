@@ -1,32 +1,48 @@
 import HexCode from "../dataTypes/HexCode"
+import HasTemplate from "../brutaldom/HasTemplate"
+import HasAttributes from "../brutaldom/HasAttributes"
 
 class ColorSwatchInputComponent extends HTMLElement {
   static observedAttributes = ["value", "labelled-by"];
-
-  connectedCallback() {
-    this._readTemplateIfNeeded()
-    const node = this.templateContent.cloneNode(true)
-    if (node.childElementCount != 1) {
-      throw `<template> with id 'g-hexcode' has ${node.childElementCount} children, but must have exactly 1`
+  static attributeListeners = {
+    "value": {
+      attributeName: "hexCode",
+      klass: HexCode,
+    },
+    "labelled-by": {
+      attributeName: "labelledBy",
     }
-    this.$element = node.firstElementChild
-    this.appendChild(node)
-    this.$element.addEventListener("input", (event) => {
-      this.setAttribute("value", this.$element.value)
-    })
-    this._render()
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name == "value") {
-      const newCode = new HexCode(newValue)
-      this.hexCode = newCode
-      this.dispatchEvent(new CustomEvent("valueChanged",{ detail: this.hexCode }))
+  connectedCallback() {
+    this.addNodeFromTemplate({
+      after: ({element}) => {
+        element.addEventListener("input", (event) => {
+          this.setAttribute("value", element.value)
+        })
+      }
+    })
+  }
+
+  set hexCode(newHexCode) {
+    this._hexCode = newHexCode
+    this.dispatchEvent(new CustomEvent("valueChanged",{ detail: newHexCode }))
+  }
+  get hexCode() {
+    return this._hexCode
+  }
+
+  set labelledBy(newLabelledBy) {
+    this.$element.setAttribute("id",newLabelledBy)
+  }
+
+  set editable(newValue) {
+    if (newValue) {
+      this.$element.removeAttribute("disabled")
     }
-    if (name == "labelled-by") {
-      this.$element.setAttribute("id",newValue)
+    else {
+      this.$element.setAttribute("disabled",true)
     }
-    this._render()
   }
 
   reset() {
@@ -52,18 +68,11 @@ class ColorSwatchInputComponent extends HTMLElement {
     }
   }
 
-  _readTemplateIfNeeded() {
-    if (this.templateContent) {
-      return
-    }
-    const $template = document.getElementById("g-color-swatch-input")
-    if (!$template) {
-      throw `Expected to find template with id 'g-color-swatch-input' but none was found`
-    }
-    this.templateContent = $template.content
-  }
+  static tagName = "g-color-swatch-input"
   static define() {
-    customElements.define("g-color-swatch-input", ColorSwatchInputComponent);
+    customElements.define(this.tagName, ColorSwatchInputComponent);
   }
 }
+HasTemplate.mixInto(ColorSwatchInputComponent)
+HasAttributes.mixInto(ColorSwatchInputComponent)
 export default ColorSwatchInputComponent

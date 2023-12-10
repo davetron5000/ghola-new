@@ -8,10 +8,12 @@ const camelCase = (string) => {
 
 const hasAttributesMixin = {
   attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue == newValue) {
+      return
+    }
     const attributeListeners = this.constructor.attributeListeners
     if (attributeListeners && attributeListeners[name]) {
       const attributeName = attributeListeners[name].attributeName || camelCase(name)
-      console.log(attributeName)
       if (attributeListeners[name].klass) {
         this[attributeName] = new attributeListeners[name].klass(newValue)
       }

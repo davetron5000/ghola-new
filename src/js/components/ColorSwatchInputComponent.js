@@ -19,6 +19,7 @@ class ColorSwatchInputComponent extends HTMLElement {
       after: ({element}) => {
         element.addEventListener("input", (event) => {
           this.setAttribute("value", element.value)
+          this.dispatchEvent(new CustomEvent("valueChangedByUser",{ detail: new HexCode(element.value) }))
         })
       }
     })
@@ -26,7 +27,6 @@ class ColorSwatchInputComponent extends HTMLElement {
 
   set hexCode(newHexCode) {
     this._hexCode = newHexCode
-    this.dispatchEvent(new CustomEvent("valueChanged",{ detail: newHexCode }))
   }
   get hexCode() {
     return this._hexCode
@@ -62,6 +62,11 @@ class ColorSwatchInputComponent extends HTMLElement {
       if (!this.$element.getAttribute("value")) {
         this.$element.setAttribute("value",this.hexCode.toString())
       }
+      const detail = {
+        value: this.hexCode,
+        isDefault: this.$element.getAttribute("value") == this.hexCode.toString(),
+      }
+      this.dispatchEvent(new CustomEvent("valueChanged",{ detail: detail }))
     }
     else {
       this.$element.textContent = ""

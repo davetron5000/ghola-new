@@ -25,7 +25,6 @@ class HexCodeComponent extends HTMLElement {
     if (!this.$element) {
       return
     }
-    console.log(this.hexCode)
     if (this.hexCode) {
       this.$codeSlot.textContent = this.hexCode
     }

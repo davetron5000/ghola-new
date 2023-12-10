@@ -61,10 +61,10 @@ class EditableColorSwatchComponent extends HTMLElement {
         }
       },
       after: ({element}) => {
-        this.$input.onValueChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail) )
-        this.$input.onValueChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail) )
+        this.$input.onValueChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.value) )
+        this.$input.onValueChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail.value) )
         this.$input.onValueChanged( (event) => {
-          if (event.detail.toString() == this.$input.getAttribute("value")) {
+          if (event.detail.isDefault) {
             this.$resetButton.disable()
           }
           else {
@@ -112,6 +112,10 @@ class EditableColorSwatchComponent extends HTMLElement {
     else {
       this.$resetButton.show()
     }
+  }
+
+  onUserChange(listener) {
+    this.$input.onValueChanged( (event) => listener(event) )
   }
 
   static define() {

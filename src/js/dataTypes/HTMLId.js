@@ -2,7 +2,7 @@ export default class HTMLId {
   static REGEXP = new RegExp("^[A-Za-z][A-Za-z0-9_\-]+$")
 
   static fromString(anyString, { prefix } = {}) {
-    let normalized = anyString.toString().replace(/[^A-Za-z0-9_\-]/,"-")
+    let normalized = anyString.toString().replaceAll(/[^A-Za-z0-9_\-]/g,"-")
     if (!normalized[0]) {
       throw `'${anyString}' could not be made into an HTMLId`
     }

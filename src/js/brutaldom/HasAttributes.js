@@ -14,11 +14,25 @@ const hasAttributesMixin = {
     const attributeListeners = this.constructor.attributeListeners
     if (attributeListeners && attributeListeners[name]) {
       const attributeName = attributeListeners[name].attributeName || camelCase(name)
-      if (attributeListeners[name].klass) {
-        this[attributeName] = new attributeListeners[name].klass(newValue)
-      }
-      else if (attributeListeners[name].value) {
-        this[attributeName] = attributeListeners[name].value(newValue)
+      const value = attributeListeners[name].value
+      if (value && typeof(value) === "function") {
+        try {
+          this[attributeName] = value(newValue)
+        }
+        catch (e) {
+          if (e instanceof TypeError) {
+            try {
+              this[attributeName] = new value(newValue)
+            }
+            catch (e2) {
+              console.error(e2)
+              throw e
+            }
+          }
+          else {
+            throw e
+          }
+        }
       }
       else {
         this[attributeName] = newValue
@@ -30,7 +44,8 @@ const hasAttributesMixin = {
 const HasAttributes = {
   mixInto(klass) {
     if (!klass.observedAttributes || !klass.observedAttributes.length || klass.observedAttributes.length == 0) {
-      throw `${klass.name} cannot use HasAttributes since it does not set observedAttributes`
+      console.log(`Setting observedAttributes for ${klass.name}`)
+      klass.observedAttributes = Object.keys(klass.attributeListeners)
     }
     Object.assign(klass.prototype,hasAttributesMixin)
   }

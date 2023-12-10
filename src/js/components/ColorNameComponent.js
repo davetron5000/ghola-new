@@ -7,7 +7,7 @@ class ColorNameComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
       attributeName: "colorName",
-      klass: ColorName,
+      value: ColorName,
     }
   }
 

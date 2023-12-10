@@ -4,13 +4,11 @@ import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 
 class EditableColorSwatchComponent extends HTMLElement {
-  static observedAttributes = ["hex-code", "description", "editable"];
   static attributeListeners = {
     "hex-code": {
-      klass: HexCode,
+      value: HexCode,
     },
-    "description": {
-    },
+    "description": { },
     "editable": {
       value: (newValue) => newValue == "true",
     }
@@ -26,13 +24,16 @@ class EditableColorSwatchComponent extends HTMLElement {
    *
    * - locating elements in the template that are supposed to be there
    * - rendering the template
+   *   -> HasAttributes
    * - using slots without fucking shadow dom
    * - dealing with attributes
+   *   -> HasAttributes (ish)
    * - handling stuff being there or not due to ordering of calls
    * - trying to use types but needing strings sometimes
    * - duplication of the custom element name in the code
    * - re-usable element with markup
    * - lots of fucking names
+   * - connecting the events in a way that makes sense
    *
    */
   connectedCallback() {

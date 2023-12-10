@@ -7,7 +7,7 @@ class ColorSwatchInputComponent extends HTMLElement {
   static attributeListeners = {
     "value": {
       attributeName: "hexCode",
-      klass: HexCode,
+      value: HexCode,
     },
     "labelled-by": {
       attributeName: "labelledBy",

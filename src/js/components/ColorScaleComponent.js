@@ -17,8 +17,8 @@ class ColorScale {
   }
 
   _calculateScale() {
-    const lower = chroma.scale(["black",this.hexCode.toString()])
-    const upper = chroma.scale([this.hexCode.toString(),"white"])
+    const lower = chroma.scale(["black",this.hexCode.toString()]).gamma(3)
+    const upper = chroma.scale([this.hexCode.toString(),"white"]).gamma(0.20)
 
     const scaleSteps = ((this.numSteps - 1) / 2) + 2
 
@@ -35,7 +35,7 @@ class ColorScaleComponent extends HTMLElement {
   ]
   static attributeListeners = {
     "name": {},
-    "hex-code": { klass: HexCode },
+    "hex-code": { value: HexCode },
   }
   constructor() {
     super()

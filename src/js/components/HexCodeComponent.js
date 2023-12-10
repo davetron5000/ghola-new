@@ -6,7 +6,7 @@ class HexCodeComponent extends HTMLElement {
   static observedAttributes = ["hex-code"];
   static attributeListeners = {
     "hex-code": {
-      klass: HexCode,
+      value: HexCode,
     }
   }
 

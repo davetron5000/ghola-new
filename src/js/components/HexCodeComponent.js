@@ -3,7 +3,6 @@ import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 
 class HexCodeComponent extends HTMLElement {
-  static observedAttributes = ["hex-code"];
   static attributeListeners = {
     "hex-code": {
       value: HexCode,

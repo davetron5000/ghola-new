@@ -29,10 +29,6 @@ class ColorScale {
 
 }
 class ColorScaleComponent extends HTMLElement {
-  static observedAttributes = [
-    "name",
-    "hex-code",
-  ]
   static attributeListeners = {
     "name": {},
     "hex-code": { value: HexCode },

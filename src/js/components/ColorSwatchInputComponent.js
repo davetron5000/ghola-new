@@ -3,7 +3,6 @@ import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 
 class ColorSwatchInputComponent extends HTMLElement {
-  static observedAttributes = ["value", "labelled-by"];
   static attributeListeners = {
     "value": {
       attributeName: "hexCode",

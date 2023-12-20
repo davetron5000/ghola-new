@@ -56,22 +56,10 @@ class EditableColorSwatchComponent extends HTMLElement {
         if (!this.$colorName) {
           throw `<template> is messed up: expected to find a <g-color-color-name> but did not`
         }
-        this.$resetButton = element.querySelector("g-reset-button")
-        if (!this.$resetButton) {
-          throw `<template> is messed up: expected to find a reset button but did not`
-        }
       },
       after: ({element}) => {
         this.$input.onValueChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.value) )
         this.$input.onValueChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail.value) )
-        this.$input.onValueChanged( (event) => {
-          if (event.detail.isDefault) {
-            this.$resetButton.disable()
-          }
-          else {
-            this.$resetButton.enable()
-          }
-        })
         element.addEventListener("reset", (event) => {
           event.preventDefault()
           this.$input.reset()
@@ -107,12 +95,6 @@ class EditableColorSwatchComponent extends HTMLElement {
       this.$inputLabel.textContent = ""
     }
     this.$input.editable = this.editable
-    if (!this.editable) {
-      this.$resetButton.hide()
-    }
-    else {
-      this.$resetButton.show()
-    }
   }
 
   onUserChange(listener) {

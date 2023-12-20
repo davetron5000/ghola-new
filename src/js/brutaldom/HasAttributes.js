@@ -44,7 +44,6 @@ const hasAttributesMixin = {
 const HasAttributes = {
   mixInto(klass) {
     if (!klass.observedAttributes || !klass.observedAttributes.length || klass.observedAttributes.length == 0) {
-      console.log(`Setting observedAttributes for ${klass.name}`)
       klass.observedAttributes = Object.keys(klass.attributeListeners)
     }
     Object.assign(klass.prototype,hasAttributesMixin)

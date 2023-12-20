@@ -27,7 +27,7 @@
       <input class="h-5 w-100 bn bw-0 pa-0 pointer" type="color" />
     </template>
     <template id="g-color-name">
-      <div class="ttu f-1 gray-darker fw-5 nowrap tl mt-2 ph-2 lh-solid h-2-lines">
+      <div class="ttu f-1 gray-darker fw-5 nowrap tl mt-2 ph-2 lh-solid h-2-lines flex items-end">
         <slot name="name"></slot>
       </div>
     </template>
@@ -37,13 +37,7 @@
         <g-color-swatch-input></g-color-swatch-input>
         <g-color-name></g-color-name>
         <g-hex-code></g-hex-code>
-        <g-reset-button class="flex"></g-reset-button>
       </form>
-    </template>
-    <template id="g-reset-button">
-        <input type="reset"
-               class="pointer dib w-100 bg-gray-dark white-ish ba bc-black-ish hover-bg-black ttl f-1 br-1 ma-1 shadow-button"
-               name="Reset"/>
     </template>
     <template id="g-color-scale">
       <div class="flex items-center justify-center ma-3 pa-3 bg-gray-lighter gap-2">

@@ -44,10 +44,6 @@ class ColorSwatchInputComponent extends HTMLElement {
     }
   }
 
-  reset() {
-    this.setAttribute("value", this.$element.getAttribute("value"))
-  }
-
   onValueChanged(listener) {
     this.addEventListener("valueChanged", listener)
   }

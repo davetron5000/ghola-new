@@ -1,33 +1,9 @@
 import HexCode from "../dataTypes/HexCode"
+import ColorName from "../dataTypes/ColorName"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
-import chroma from "chroma-js"
+import ColorScale from "../dataTypes/ColorScale"
 
-class ColorScale {
-  constructor({hexCode,numSteps}) {
-    this.hexCode = hexCode
-    this.numSteps = numSteps
-    if (this.numSteps % 2 == 0) {
-      throw `numSteps must be odd`
-    }
-    if (this.numSteps < 3) {
-      throw `numSteps must be at least 3`
-    }
-    this.scale = this._calculateScale()
-  }
-
-  _calculateScale() {
-    const lower = chroma.scale(["black",this.hexCode.toString()]).gamma(3)
-    const upper = chroma.scale([this.hexCode.toString(),"white"]).gamma(0.20)
-
-    const scaleSteps = ((this.numSteps - 1) / 2) + 2
-
-    const lowerColors = lower.colors(scaleSteps).map( (string) => new HexCode(string) )
-    const upperColors = upper.colors(scaleSteps).map( (string) => new HexCode(string) )
-    return lowerColors.slice(1,scaleSteps-1).concat([this.hexCode]).concat(upperColors.slice(1,scaleSteps-1))
-  }
-
-}
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
     "name": {},
@@ -35,43 +11,47 @@ class ColorScaleComponent extends HTMLElement {
   }
   constructor() {
     super()
-    this.numSteps = 7
+    this.numSteps = 7 
   }
 
   set hexCode(hexCode) {
-    this.scale = new ColorScale({ numSteps: 7, hexCode: hexCode })
+    this.colorScale = new ColorScale({ numSteps: this.numSteps, hexCode: hexCode})
+    this.name = new ColorName(hexCode).toString()
   }
 
   connectedCallback() {
     this.addNodeFromTemplate()
   }
 
+  _updateSwatch(swatch,index) {
+    swatch.setAttribute("hex-code", this.colorScale.color(index).toString())
+    swatch.setAttribute("description", `${this.name} level ${index}`)
+  }
+
   _render() {
     if (!this.$element) {
       return
     }
-    if (this.name && this.scale) {
+    if (this.name && this.colorScale) {
       if (!this.swatches) {
         this.swatches = this._createSwatches()
       }
-      else {
-        this.swatches.forEach( (swatch, index) => {
-          swatch.setAttribute("hex-code", this.scale.scale[index].toString())
-        })
-      }
+      this.swatches.forEach( (swatch, index) => this._updateSwatch(swatch,index) )
     }
   }
   _createSwatches() {
-    return this.scale.scale.map( (hexCode,index) => {
+    const middle = (this.colorScale.length - 1) / 2
+    return this.colorScale.map( (hexCode,index) => {
       const swatch = document.createElement("g-editable-color-swatch")
-      swatch.setAttribute("editable", index == 3)
-      swatch.setAttribute("description", `${name} level ${index}`)
-      swatch.setAttribute("hex-code", hexCode.toString())
       this.$element.appendChild(swatch)
-      if (index == 3) {
+      if (index == middle) {
+        swatch.setAttribute("editable", true)
         swatch.onUserChange( (event) => {
           this.setAttribute("hex-code",event.detail.value.toString())
         })
+      }
+      else {
+        swatch.setAttribute("editable", false)
       }
       return swatch
     })
@@ -82,6 +62,8 @@ class ColorScaleComponent extends HTMLElement {
     customElements.define(this.tagName, ColorScaleComponent);
   }
 }
+
 HasTemplate.mixInto(ColorScaleComponent)
 HasAttributes.mixInto(ColorScaleComponent)
+
 export default ColorScaleComponent

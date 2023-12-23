@@ -2,6 +2,7 @@ import HexCode from "../dataTypes/HexCode"
 import HTMLId from "../dataTypes/HTMLId"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
+import HasEvents from "../brutaldom/HasEvents"
 
 class EditableColorSwatchComponent extends HTMLElement {
   static attributeListeners = {
@@ -14,28 +15,15 @@ class EditableColorSwatchComponent extends HTMLElement {
     }
   }
 
+  static events = {
+    hexCodeChanged: {},
+  }
+
   constructor() {
     super()
     this.editable = true
   }
 
-  /*
-   * Here is what SUUUCKS:
-   *
-   * - locating elements in the template that are supposed to be there
-   * - rendering the template
-   *   -> HasAttributes
-   * - using slots without fucking shadow dom
-   * - dealing with attributes
-   *   -> HasAttributes (ish)
-   * - handling stuff being there or not due to ordering of calls
-   * - trying to use types but needing strings sometimes
-   * - duplication of the custom element name in the code
-   * - re-usable element with markup
-   * - lots of fucking names
-   * - connecting the events in a way that makes sense
-   *
-   */
   connectedCallback() {
     this.addNodeFromTemplate({
       childTagName: "form",
@@ -58,12 +46,9 @@ class EditableColorSwatchComponent extends HTMLElement {
         }
       },
       after: ({element}) => {
-        this.$input.onValueChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.value) )
-        this.$input.onValueChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail.value) )
-        element.addEventListener("reset", (event) => {
-          event.preventDefault()
-          this.$input.reset()
-        })
+        this.$input.onHexCodeChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.toString()) )
+        this.$input.onHexCodeChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail.toString()) )
+        this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
         element.addEventListener("submit", (event) =>  event.preventDefault() )
       },
     })
@@ -97,10 +82,6 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.$input.editable = this.editable
   }
 
-  onUserChange(listener) {
-    this.$input.onValueChanged( (event) => listener(event) )
-  }
-
   static define() {
     customElements.define(this.tagName, EditableColorSwatchComponent);
   }
@@ -108,4 +89,5 @@ class EditableColorSwatchComponent extends HTMLElement {
 }
 HasTemplate.mixInto(EditableColorSwatchComponent)
 HasAttributes.mixInto(EditableColorSwatchComponent)
+HasEvents.mixInto(EditableColorSwatchComponent)
 export default EditableColorSwatchComponent

@@ -4,10 +4,20 @@ import EditableColorSwatchComponent from "./components/EditableColorSwatchCompon
 import ColorNameComponent           from "./components/ColorNameComponent"
 import ResetButtonComponent         from "./components/ResetButtonComponent"
 import ColorScaleComponent          from "./components/ColorScaleComponent"
+import ButtonAccentEnhancement      from "./components/enhancements/ButtonAccentEnhancement"
+import ColorInPaletteComponent      from "./components/ColorInPaletteComponent"
+import AddColorButtonComponent      from "./components/AddColorButtonComponent"
+import PaletteComponent             from "./components/PaletteComponent"
 
-HexCodeComponent.define()
-ColorSwatchInputComponent.define()
-EditableColorSwatchComponent.define()
-ColorNameComponent.define()
-ResetButtonComponent.define()
-ColorScaleComponent.define()
+document.addEventListener("DOMContentLoaded", () => {
+  HexCodeComponent.define()
+  ColorSwatchInputComponent.define()
+  EditableColorSwatchComponent.define()
+  ColorNameComponent.define()
+  ResetButtonComponent.define()
+  ColorScaleComponent.define()
+  ButtonAccentEnhancement.define()
+  ColorInPaletteComponent.define()
+  AddColorButtonComponent.define()
+  PaletteComponent.define()
+})

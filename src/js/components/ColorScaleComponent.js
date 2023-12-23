@@ -2,13 +2,17 @@ import HexCode from "../dataTypes/HexCode"
 import ColorName from "../dataTypes/ColorName"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
+import HasEvents from "../brutaldom/HasEvents"
 import ColorScale from "../dataTypes/ColorScale"
 
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
-    "name": {},
     "hex-code": { value: HexCode },
   }
+  static events = {
+    baseColorChange: {}
+  }
+
   constructor() {
     super()
     this.numSteps = 7 
@@ -46,8 +50,9 @@ class ColorScaleComponent extends HTMLElement {
       this.$element.appendChild(swatch)
       if (index == middle) {
         swatch.setAttribute("editable", true)
-        swatch.onUserChange( (event) => {
-          this.setAttribute("hex-code",event.detail.value.toString())
+        swatch.onHexCodeChanged( (event) => {
+          this.setAttribute("hex-code",event.detail.toString())
+          this.dispatchBaseColorChange(event.detail)
         })
       }
       else {
@@ -65,5 +70,6 @@ class ColorScaleComponent extends HTMLElement {
 
 HasTemplate.mixInto(ColorScaleComponent)
 HasAttributes.mixInto(ColorScaleComponent)
+HasEvents.mixInto(ColorScaleComponent)
 
 export default ColorScaleComponent

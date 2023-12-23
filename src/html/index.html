@@ -32,7 +32,7 @@
       </div>
     </template>
     <template id="g-editable-color-swatch">
-      <form class="bg-white w-5 flex flex-column pa-0 justify-center">
+      <form class="bg-white w-5 flex flex-column pa-0 justify-center ba bc-gray-lightest">
         <label class="ma-0 pa-0 sr-only"></label>
         <g-color-swatch-input></g-color-swatch-input>
         <g-color-name></g-color-name>
@@ -40,18 +40,46 @@
       </form>
     </template>
     <template id="g-color-scale">
-      <div class="flex items-center justify-center ma-3 pa-3 bg-gray-lighter gap-2">
+      <div class="flex items-center justify-center pa-3 gap-2 ba bc-gray-lighter bg-white br-1">
       </div>
     </template>
+    <template id="g-color-in-palette">
+      <div class="flex items-center justify-center pa-3 bn br-1 shadow-1 bg-gray-lightest">
+        <nav class="flex flex-column gap-3 pa-3 bl bt bb br-1 bc-gray-lighter bg-white">
+          <g-pe-button-accent color="red" icon="&times;" icon-description="'x' or times sign">
+            <button data-remove class="pointer f-1 flex-grow-1 ph-3 pv-2 tc ba br-3">
+              Remove Color
+            </button>
+          </g-pe-button-accent>
+          <g-pe-button-accent color="gray" icon="&#8616;" icon-description="vertical double-ended arrow with a bar on the bottom">
+            <button class="pointer f-1 flex-grow-1 ph-3 pv-2 tc ba br-3">
+              Apply Lightness
+            </button>
+          </g-pe-button-accent>
+          <g-pe-button-accent color="orange" icon="&empty;" icon-description="circle with slash through it">
+            <button class="pointer f-1 flex-grow-1 ph-3 pv-2 tc ba br-3">Restore Lightness</button>
+          </g-pe-button-accent>
+        </nav>
+        <g-color-scale></g-color-scale>
+      </div>
+    </template>
+    <template id="g-add-color-button">
+      <g-pe-button-accent color="blue" icon="+" icon-description="a plus sign">
+        <button class="pointer f-3 ph-3 pv-2 tc ba br-3 lh-solid">Add New Color</button>
+      </g-pe-button-accent>
+    </template>
+    <template id="g-palette">
+      <article>
+        <section class="flex flex-column gap-3">
+        </section>
+        <nav class="flex items-center justify-center pa-3 gap-3">
+          <g-add-color-button accent="blue" name="color"></g-add-color-button>
+        </nav>
+      </article>
+    </template>
   </head>
-  <body class="ff-sans bg-white-ish black-ish">
-    <g-color-scale name="red" hex-code="#FF0000"></g-color-scale>
-    <g-color-scale name="green" hex-code="#00FF00"></g-color-scale>
-    <g-color-scale name="blue" hex-code="#0000FF"></g-color-scale>
-    <!--
-      <g-editable-color-swatch description="red darkest"  hex-code="#220000" editable="false"></g-editable-color-swatch>
-      <g-editable-color-swatch description="red darker"   hex-code="#550000"></g-editable-color-swatch>
-    -->
+  <body class="ff-sans bg-white-ish black-ish pa-3">
+    <g-palette primary-hex-code="#452176"></g-palette>
   </body>
 </html>
 

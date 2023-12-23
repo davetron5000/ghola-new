@@ -1,6 +1,10 @@
-# tleilax - a basic static site generator with minimal needs
+# ghola - color palette generator for devs
 
-This is the template for how I'm building small static sites with just a few HTML pages.
+## Features
+
+* Adjust brightness based on reference color
+* Save choices in the url and pick them out as well
+
 
 ## Setup
 
@@ -11,4 +15,4 @@ This is the template for how I'm building small static sites with just a few HTM
 5. In another window:
    1. `dx/exec bin/setup`
    2. `dx/exec bin/dev`
-6. Open `http://localhost:5000` in your browser
+6. Open `http://localhost:5555` in your browser

@@ -8,13 +8,15 @@ const camelCase = (string) => {
 
 const hasAttributesMixin = {
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue == newValue) {
-      return
-    }
+    const valueChanged = oldValue !== newValue
     const attributeListeners = this.constructor.attributeListeners
     if (attributeListeners && attributeListeners[name]) {
       const attributeName = attributeListeners[name].attributeName || camelCase(name)
       const value = attributeListeners[name].value
+      const debug = attributeListeners[name].debug
+      if (debug) {
+        console.log("HasAttributes: %s changed from %s to %s",name,oldValue,newValue)
+      }
       if (value && typeof(value) === "function") {
         try {
           this[attributeName] = value(newValue)
@@ -38,7 +40,9 @@ const hasAttributesMixin = {
         this[attributeName] = newValue
       }
     }
-    this._render()
+    if (valueChanged) {
+      this._render()
+    }
   }
 }
 const HasAttributes = {

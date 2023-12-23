@@ -1,6 +1,7 @@
 import HexCode from "../dataTypes/HexCode"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
+import HasEvents from "../brutaldom/HasEvents"
 
 class ColorSwatchInputComponent extends HTMLElement {
   static attributeListeners = {
@@ -8,49 +9,40 @@ class ColorSwatchInputComponent extends HTMLElement {
       attributeName: "hexCode",
       value: HexCode,
     },
-    "labelled-by": {
-      attributeName: "labelledBy",
+    "labelled-by": {},
+    "editable": {
+      value: (x) => x == "true",
     }
+  }
+
+  static events = {
+    hexCodeChanged: {}
   }
 
   connectedCallback() {
     this.addNodeFromTemplate({
       after: ({element}) => {
-        element.addEventListener("input", (event) => {
+        element.addEventListener("change", (event) => {
           this.setAttribute("value", element.value)
-          this.dispatchEvent(new CustomEvent("valueChangedByUser",{ detail: new HexCode(element.value) }))
+          this.dispatchHexCodeChanged(HexCode.fromString(element.value))
         })
       }
     })
   }
 
-  set hexCode(newHexCode) {
-    this._hexCode = newHexCode
-  }
-  get hexCode() {
-    return this._hexCode
-  }
-
-  set labelledBy(newLabelledBy) {
-    this.$element.setAttribute("id",newLabelledBy)
-  }
-
-  set editable(newValue) {
-    if (newValue) {
-      this.$element.removeAttribute("disabled")
-    }
-    else {
-      this.$element.setAttribute("disabled",true)
-    }
-  }
-
-  onValueChanged(listener) {
-    this.addEventListener("valueChanged", listener)
+  disconnectedCallback() {
+    this.removeEventListeners()
   }
 
   _render() {
     if (!this.$element) {
       return
+    }
+    if (this.labelledBy) {
+      this.$element.setAttribute("id",this.labelledBy)
+    }
+    else {
+      this.$element.removeAttribute("id")
     }
     if (this.hexCode) {
       this.$element.value = this.hexCode.toString()
@@ -61,10 +53,15 @@ class ColorSwatchInputComponent extends HTMLElement {
         value: this.hexCode,
         isDefault: this.$element.getAttribute("value") == this.hexCode.toString(),
       }
-      this.dispatchEvent(new CustomEvent("valueChanged",{ detail: detail }))
     }
     else {
       this.$element.textContent = ""
+    }
+    if (this.editable) {
+      this.$element.removeAttribute("disabled")
+    }
+    else {
+      this.$element.setAttribute("disabled",true)
     }
   }
 
@@ -75,4 +72,5 @@ class ColorSwatchInputComponent extends HTMLElement {
 }
 HasTemplate.mixInto(ColorSwatchInputComponent)
 HasAttributes.mixInto(ColorSwatchInputComponent)
+HasEvents.mixInto(ColorSwatchInputComponent)
 export default ColorSwatchInputComponent

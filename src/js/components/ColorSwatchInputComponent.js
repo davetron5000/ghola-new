@@ -46,9 +46,7 @@ class ColorSwatchInputComponent extends HTMLElement {
     }
     if (this.hexCode) {
       this.$element.value = this.hexCode.toString()
-      if (!this.$element.getAttribute("value")) {
-        this.$element.setAttribute("value",this.hexCode.toString())
-      }
+      this.$element.setAttribute("value",this.hexCode.toString())
       const detail = {
         value: this.hexCode,
         isDefault: this.$element.getAttribute("value") == this.hexCode.toString(),

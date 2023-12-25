@@ -11,11 +11,8 @@ class HexCodeComponent extends HTMLElement {
 
   connectedCallback() {
     this.addNodeFromTemplate({
-      before: ({element}) => {
-        this.$codeSlot = element.querySelector("slot[name='code']")
-        if (!this.$codeSlot) {
-          throw `<template> is messed up - expected a <slot name='code'> but did not find one`
-        }
+      before: ({locator}) => {
+        this.$codeSlot = locator.$e("slot[name='code']")
       }
     })
   }
@@ -25,7 +22,7 @@ class HexCodeComponent extends HTMLElement {
       return
     }
     if (this.hexCode) {
-      this.$codeSlot.textContent = this.hexCode
+      this.$codeSlot.textContent = this.hexCode.toString()
     }
     else {
       this.$codeSlot.textContent = ""

@@ -1,3 +1,5 @@
+import Locator from "./Locator"
+
 const noop = () => {}
 
 const hasTemplateMixin = {
@@ -5,11 +7,11 @@ const hasTemplateMixin = {
     const node = this._newNodeFromTemplate()
     this.$element = node.firstElementChild
 
-    before({ element: this.$element })
+    before({ element: this.$element, locator: new Locator(this.$element) })
 
     this.appendChild(node)
 
-    after({ element: this.$element })
+    after({ element: this.$element, locator: new Locator(this.$element) })
 
     if (render) {
       this._render()

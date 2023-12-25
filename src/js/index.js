@@ -1,13 +1,13 @@
-import HexCodeComponent             from "./components/HexCodeComponent"
-import ColorSwatchInputComponent    from "./components/ColorSwatchInputComponent"
-import EditableColorSwatchComponent from "./components/EditableColorSwatchComponent"
-import ColorNameComponent           from "./components/ColorNameComponent"
-import ResetButtonComponent         from "./components/ResetButtonComponent"
-import ColorScaleComponent          from "./components/ColorScaleComponent"
-import ButtonAccentEnhancement      from "./components/enhancements/ButtonAccentEnhancement"
-import ColorInPaletteComponent      from "./components/ColorInPaletteComponent"
-import AddColorButtonComponent      from "./components/AddColorButtonComponent"
-import PaletteComponent             from "./components/PaletteComponent"
+import HexCodeComponent              from "./components/HexCodeComponent"
+import ColorSwatchInputComponent     from "./components/ColorSwatchInputComponent"
+import EditableColorSwatchComponent  from "./components/EditableColorSwatchComponent"
+import ColorNameComponent            from "./components/ColorNameComponent"
+import ResetButtonComponent          from "./components/ResetButtonComponent"
+import ColorScaleComponent           from "./components/ColorScaleComponent"
+import ButtonAccentEnhancement       from "./components/enhancements/ButtonAccentEnhancement"
+import ColorInPaletteComponent       from "./components/ColorInPaletteComponent"
+import AddRandomColorButtonComponent from "./components/AddRandomColorButtonComponent"
+import PaletteComponent              from "./components/PaletteComponent"
 
 document.addEventListener("DOMContentLoaded", () => {
   HexCodeComponent.define()
@@ -18,6 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
   ColorScaleComponent.define()
   ButtonAccentEnhancement.define()
   ColorInPaletteComponent.define()
-  AddColorButtonComponent.define()
+  AddRandomColorButtonComponent.define()
   PaletteComponent.define()
 })

@@ -2,6 +2,7 @@ import HexCode from "../dataTypes/HexCode"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
+import HasRequiredChildElements from "../brutaldom/HasRequiredChildElements"
 
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
@@ -14,27 +15,43 @@ class ColorInPaletteComponent extends HTMLElement {
   }
 
   static events = {
-    "removed": {},
-    "changed": {},
+    removed: {},
+    changed: {},
+    colorsAdded: {},
   }
 
   connectedCallback() {
+    this._debugColorsAdded()
     this.addNodeFromTemplate({
-      before: ({element}) => {
-        this.$colorScale = element.querySelector("g-color-scale")
-        if (!this.$colorScale) {
-          throw `<template> is messed up - expected a <g-color-scale>`
-        }
-        this.$removeButton = element.querySelector("button[data-remove]")
-        if (!this.$removeButton) {
-          throw `<template> is messed up - expected a <button data-remove>`
-        }
+      before: ({locator}) => {
+        this.$colorScale = locator.$e("g-color-scale")
+        this.$removeButton = locator.$e("button[data-remove]")
+        this.$complementButton = locator.$e("button[data-complement]")
+        this.$splitComplementButton = locator.$e("button[data-split-complement]")
+        this.$analogousButton = locator.$e("button[data-analogous]")
+        this.$triadButton = locator.$e("button[data-triad]")
       },
       after: () => {
         this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
         this.$removeButton.addEventListener("click", (event) => {
           event.preventDefault()
           this.dispatchRemoved(event.detail)
+        })
+        this.$complementButton.addEventListener("click", (event) => {
+          event.preventDefault()
+          this.dispatchColorsAdded([ this.hexCode.complement() ])
+        })
+        this.$splitComplementButton.addEventListener("click", (event) => {
+          event.preventDefault()
+          this.dispatchColorsAdded(this.hexCode.splitComplements())
+        })
+        this.$analogousButton.addEventListener("click", (event) => {
+          event.preventDefault()
+          this.dispatchColorsAdded(this.hexCode.analogous())
+        })
+        this.$triadButton.addEventListener("click", (event) => {
+          event.preventDefault()
+          this.dispatchColorsAdded(this.hexCode.triad())
         })
       }
     })
@@ -43,6 +60,10 @@ class ColorInPaletteComponent extends HTMLElement {
   disconnectedCallback() {
     this.removeEventListeners()
     this.$removeButton.removeEventListener("click", this.removeButtonClickListener)
+  }
+
+  applyLightnessFrom(colorInPalette) {
+    this.$colorScale.applyLightnessFrom(colorInPalette.$colorScale)
   }
   
   _render() {
@@ -53,10 +74,10 @@ class ColorInPaletteComponent extends HTMLElement {
       this.$colorScale.setAttribute("hex-code", this.hexCode.toString())
     }
     if (this.primary) {
-      this.$removeButton.style.visibility = "hidden"
+      this.$removeButton.style.display = "none"
     }
     else {
-      this.$removeButton.style.visibility = "visible"
+      this.$removeButton.style.display = "block"
     }
   }
 

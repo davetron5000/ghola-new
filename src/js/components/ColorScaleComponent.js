@@ -27,6 +27,15 @@ class ColorScaleComponent extends HTMLElement {
     this.addNodeFromTemplate()
   }
 
+  applyLightnessFrom($colorScale) {
+    this.$lightnessBasedOnColorScale = $colorScale
+    if (this.colorScale && $colorScale.colorScale) {
+      this.colorScale = this.colorScale.matchLightness($colorScale.colorScale)
+      this._render()
+    }
+  }
+
+
   _updateSwatch(swatch,index) {
     swatch.setAttribute("hex-code", this.colorScale.color(index).toString())
     swatch.setAttribute("description", `${this.name} level ${index}`)

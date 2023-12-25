@@ -27,23 +27,11 @@ class EditableColorSwatchComponent extends HTMLElement {
   connectedCallback() {
     this.addNodeFromTemplate({
       childTagName: "form",
-      before: ({element}) => {
-        this.$input = element.querySelector("g-color-swatch-input")
-        if (!this.$input) {
-          throw `<template> is messed up: expected to find a <g-color-swatch-input> but did not`
-        }
-        this.$inputLabel = element.querySelector("label")
-        if (!this.$inputLabel) {
-          throw `<template> is messed up: expected to find a <label> but did not`
-        }
-        this.$hexCode = element.querySelector("g-hex-code")
-        if (!this.$hexCode) {
-          throw `<template> is messed up: expected to find a <g-hex-code> but did not`
-        }
-        this.$colorName = element.querySelector("g-color-name")
-        if (!this.$colorName) {
-          throw `<template> is messed up: expected to find a <g-color-color-name> but did not`
-        }
+      before: ({locator}) => {
+        this.$input = locator.$e("g-color-swatch-input")
+        this.$inputLabel = locator.$e("label")
+        this.$hexCode = locator.$e("g-hex-code")
+        this.$colorName = locator.$e("g-color-name")
       },
       after: ({element}) => {
         this.$input.onHexCodeChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.toString()) )

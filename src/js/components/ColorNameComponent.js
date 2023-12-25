@@ -12,11 +12,8 @@ class ColorNameComponent extends HTMLElement {
 
   connectedCallback() {
     this.addNodeFromTemplate({
-      before: (element) => {
-        this.$nameSlot = this.$element.querySelector("slot[name='name']")
-        if (!this.$nameSlot) {
-          throw `<template> is messed up - expected a <slot name='name'> but did not find one`
-        }
+      before: ({locator}) => {
+        this.$nameSlot = locator.$e("slot[name='name']")
       }
     })
   }

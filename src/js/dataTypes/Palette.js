@@ -1,4 +1,3 @@
-import chroma from "chroma-js"
 
 import HexCode from "../dataTypes/HexCode"
 import HasEvents from "../brutaldom/HasEvents"
@@ -49,7 +48,7 @@ class Palette extends EventTarget {
   }
 
   newColor() {
-    return new HexCode(chroma.random().hex())
+    return HexCode.random()
   }
 }
 HasEvents.mixInto(Palette)

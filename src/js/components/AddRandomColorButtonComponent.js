@@ -2,7 +2,7 @@ import HasTemplate   from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 
-class AddColorButtonComponent extends HTMLElement {
+class AddRandomColorButtonComponent extends HTMLElement {
   static attributeListeners = {
     accent: {},
   }
@@ -12,11 +12,8 @@ class AddColorButtonComponent extends HTMLElement {
 
   connectedCallback() {
     this.addNodeFromTemplate({
-      before:({element}) => {
-        this.$button = element.querySelector("button")
-        if (!this.$button) {
-          throw "<template> is messed up - expected a <button> but did not find one"
-        }
+      before:({locator}) => {
+        this.$button = locator.$e("button")
         this.$button.addEventListener("click", (event) => {
           event.preventDefault()
           event.stopPropagation()
@@ -43,14 +40,14 @@ class AddColorButtonComponent extends HTMLElement {
 
   }
   
-  static tagName = "g-add-color-button"
+  static tagName = "g-add-random-color-button"
 
   static define() {
-    customElements.define(this.tagName, AddColorButtonComponent);
+    customElements.define(this.tagName, AddRandomColorButtonComponent);
   }
 }
-HasTemplate.mixInto(AddColorButtonComponent)
-HasAttributes.mixInto(AddColorButtonComponent)
-HasEvents.mixInto(AddColorButtonComponent)
+HasTemplate.mixInto(AddRandomColorButtonComponent)
+HasAttributes.mixInto(AddRandomColorButtonComponent)
+HasEvents.mixInto(AddRandomColorButtonComponent)
 
-export default AddColorButtonComponent
+export default AddRandomColorButtonComponent

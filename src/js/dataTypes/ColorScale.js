@@ -19,6 +19,7 @@ export default class ColorScale {
   map(f)       { return this.scale.map(f) }
   color(index) { return this.scale[index] }
   get length() { return this.scale.length }
+  forEach(f)   { return this.scale.forEach(f) }
 
   _percentForIndex(index,largestIndex) {
     // I hand-crafted a set of values for 7 steps, then had
@@ -49,7 +50,7 @@ export default class ColorScale {
     const halfway = (this.numSteps-1) / 2
     for (let i = 0; i < this.numSteps; i++) {
       if (i == halfway) {
-        selectedColors[halfway] = this.hexCode.toString()
+        selectedColors[halfway] = this.hexCode
       }
       else {
         selectedColors[i] = colors[Math.floor(colors.length * this._percentForIndex(i,this.numSteps-1))]

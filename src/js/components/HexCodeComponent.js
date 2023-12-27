@@ -9,7 +9,7 @@ class HexCodeComponent extends HTMLElement {
     }
   }
 
-  beforeAppendTemplate({locator}) {
+  afterAppendTemplate({locator}) {
     this.$codeSlot = locator.$e("slot[name='code']")
   }
 

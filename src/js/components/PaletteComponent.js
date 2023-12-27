@@ -31,12 +31,9 @@ class PaletteComponent extends HTMLElement {
     this.palette.onReplaced( () => this._replacePalette() )
   }
 
-  beforeAppendTemplate({locator}) {
+  afterAppendTemplate({locator}) {
     this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
     this.$colorSection = locator.$e("section")
-  }
-
-  afterAppendTemplate() {
     this.$addRandomColorButton.onClick( () => this._addColor() )
   }
 
@@ -87,7 +84,6 @@ class PaletteComponent extends HTMLElement {
   }
 
 
-
   _addColor(hexCode) {
     if (!this.$element) {
       return
@@ -107,17 +103,15 @@ class PaletteComponent extends HTMLElement {
     this._addIndexes()
 
     newColorInPalette.onChanged( (event) => {
-      const index = this._getIndex(newColorInPalette)
-      if (index) {
+      this._getIndex(newColorInPalette, (index) => {
         this.palette.changeColor(index,event.detail)
-      }
+      })
     })
 
     newColorInPalette.onRemoved( (event) => {
-      const index = this._getIndex(newColorInPalette)
-      if (index) {
+      this._getIndex(newColorInPalette, (index) => {
         this.palette.removeColor(index)
-      }
+      })
       this.$colorSection.removeChild(newColorInPalette) 
       this._addIndexes()
     })
@@ -126,19 +120,17 @@ class PaletteComponent extends HTMLElement {
       event.detail.forEach( (hexCode) => this._addColor(hexCode) )
     })
 
-    const index = this._getIndex(newColorInPalette)
-    if (index) {
+    this._getIndex(newColorInPalette, (index) => {
       this.palette.changeColor(index,newColorHexCode)
-    }
+    })
 
   }
 
-  _getIndex(element) {
+  _getIndex(element,ifIndexExists) {
     const index = parseInt(element.getAttribute("index"))
-    if (isNaN(index)) {
-      return null
+    if (!isNaN(index)) {
+      ifIndexExists(index)
     }
-    return index
   }
 
   _addIndexes() {

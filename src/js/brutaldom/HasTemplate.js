@@ -5,10 +5,6 @@ const hasTemplateMixin = {
     const node = this._newNodeFromTemplate()
     this.$element = node.firstElementChild
 
-    if (this.beforeAppendTemplate) {
-      this.beforeAppendTemplate({ element: this.$element, locator: new Locator(this.$element) })
-    }
-
     this.appendChild(node)
 
     if (this.afterAppendTemplate) {

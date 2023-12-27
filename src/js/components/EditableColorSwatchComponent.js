@@ -25,18 +25,18 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.editable = true
   }
 
-  beforeAppendTemplate({locator}) {
-    this.$input = locator.$e("g-color-swatch-input")
-    this.$inputLabel = locator.$e("label")
-    this.$hexCode = locator.$e("g-hex-code")
-    this.$colorName = locator.$e("g-color-name")
-  }
-
-  afterAppendTemplate() {
-    this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
-    this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
-    this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
+  afterAppendTemplate({locator}) {
     this.$element.addEventListener("submit", (event) =>  event.preventDefault() )
+    this.$colorName = locator.$e("g-color-name")
+
+    this.$hexCode = locator.$e("g-hex-code")
+
+    this.$input = locator.$e("g-color-swatch-input")
+    this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
+    this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
+    this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
+
+    this.$inputLabel = locator.$e("label")
   }
 
   connectedCallback() {

@@ -10,7 +10,7 @@ class ColorNameComponent extends HTMLElement {
     }
   }
 
-  beforeAppendTemplate({locator}) {
+  afterAppendTemplate({locator}) {
     this.$nameSlot = locator.$e("slot[name='name']")
   }
 

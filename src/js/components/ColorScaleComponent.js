@@ -30,11 +30,7 @@ class ColorScaleComponent extends HTMLElement {
     this.dispatchBaseColorChange(hexCode)
   }
 
-  connectedCallback() {
-    this.addNodeFromTemplate()
-  }
-
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

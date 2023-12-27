@@ -25,21 +25,23 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.editable = true
   }
 
+  beforeAppendTemplate({locator}) {
+    this.$input = locator.$e("g-color-swatch-input")
+    this.$inputLabel = locator.$e("label")
+    this.$hexCode = locator.$e("g-hex-code")
+    this.$colorName = locator.$e("g-color-name")
+  }
+
+  afterAppendTemplate() {
+    this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
+    this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
+    this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
+    this.$element.addEventListener("submit", (event) =>  event.preventDefault() )
+  }
+
   connectedCallback() {
     this.addNodeFromTemplate({
       childTagName: "form",
-      before: ({locator}) => {
-        this.$input = locator.$e("g-color-swatch-input")
-        this.$inputLabel = locator.$e("label")
-        this.$hexCode = locator.$e("g-hex-code")
-        this.$colorName = locator.$e("g-color-name")
-      },
-      after: ({element}) => {
-        this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
-        this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
-        this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
-        element.addEventListener("submit", (event) =>  event.preventDefault() )
-      },
     })
   }
 
@@ -48,7 +50,7 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.setAttribute("description",description)
   }
 
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

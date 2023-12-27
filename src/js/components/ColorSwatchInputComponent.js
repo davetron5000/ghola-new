@@ -25,14 +25,10 @@ class ColorSwatchInputComponent extends HTMLElement {
   setLabel($label) { this.setAttribute("labelled-by",$label.getAttribute("for")) }
   removeLabel($label) { this.removeAttribute("labelled-by") }
 
-  connectedCallback() {
-    this.addNodeFromTemplate({
-      after: ({element}) => {
-        element.addEventListener("change", (event) => {
-          this.setAttribute("value", element.value)
-          this.dispatchHexCodeChanged(HexCode.fromString(element.value))
-        })
-      }
+  afterAppendTemplate() {
+    this.$element.addEventListener("change", (event) => {
+      this.setAttribute("value", this.$element.value)
+      this.dispatchHexCodeChanged(HexCode.fromString(this.$element.value))
     })
   }
 
@@ -40,7 +36,7 @@ class ColorSwatchInputComponent extends HTMLElement {
     this.removeEventListeners()
   }
 
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

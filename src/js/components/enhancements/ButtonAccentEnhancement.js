@@ -9,10 +9,10 @@ class ButtonAccentEnhancement extends HTMLElement {
 
   connectedCallback() {
     this.button = this.querySelector("button")
-    this._render()
+    this.render()
   }
 
-  _render() {
+  render() {
     if (!this.color) {
       return
     }

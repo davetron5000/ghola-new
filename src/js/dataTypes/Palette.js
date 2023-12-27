@@ -14,7 +14,6 @@ class Palette extends EventTarget {
   }
 
   replace(primaryColor,otherColors) {
-    window.HexCode = HexCode
     this.hexCodes = [
       primaryColor
     ]

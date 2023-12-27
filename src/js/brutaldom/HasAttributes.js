@@ -41,7 +41,9 @@ const hasAttributesMixin = {
       }
     }
     if (valueChanged) {
-      this._render()
+      if (this.render) {
+        this.render()
+      }
     }
   }
 }

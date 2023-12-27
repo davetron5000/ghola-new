@@ -1,20 +1,26 @@
 import Locator from "./Locator"
 
-const noop = () => {}
-
 const hasTemplateMixin = {
-  addNodeFromTemplate({ childTagName, before = noop, after = noop, render = true} = {}) {
+  addNodeFromTemplate({ childTagName, before, after } = {}) {
     const node = this._newNodeFromTemplate()
     this.$element = node.firstElementChild
 
-    before({ element: this.$element, locator: new Locator(this.$element) })
+    if (this.beforeAppendTemplate) {
+      this.beforeAppendTemplate({ element: this.$element, locator: new Locator(this.$element) })
+    }
 
     this.appendChild(node)
 
-    after({ element: this.$element, locator: new Locator(this.$element) })
+    if (this.afterAppendTemplate) {
+      this.afterAppendTemplate({ element: this.$element, locator: new Locator(this.$element) })
+    }
 
-    if (render) {
-      this._render()
+    if (this.render) {
+      this.render()
+    }
+
+    if (this.afterRenderTemplate) {
+      this.afterRenderTemplate({ element: this.$element, locator: new Locator(this.$element) })
     }
   },
   _newNodeFromTemplate({ childTagName } = {}) {
@@ -44,6 +50,9 @@ const HasTemplate = {
       throw `${klass.name} cannot be mixed into HasTemplate since it doesn't have a static member 'tagName'`
     }
     Object.assign(klass.prototype,hasTemplateMixin)
+    if (!klass.prototype.connectedCallback) {
+      klass.prototype.connectedCallback = klass.prototype.addNodeFromTemplate
+    }
   }
 }
 

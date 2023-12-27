@@ -10,18 +10,14 @@ class ColorNameComponent extends HTMLElement {
     }
   }
 
-  connectedCallback() {
-    this.addNodeFromTemplate({
-      before: ({locator}) => {
-        this.$nameSlot = locator.$e("slot[name='name']")
-      }
-    })
+  beforeAppendTemplate({locator}) {
+    this.$nameSlot = locator.$e("slot[name='name']")
   }
 
   updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
   clearHexCode()         { this.removeAttribute("hex-code") }
 
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

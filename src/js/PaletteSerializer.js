@@ -4,7 +4,6 @@ export default class PaletteSerializer {
 
   constructor(palette, window) {
     this.palette = palette
-    this.palette.onChanged( () => this.save() )
     this.window = window
 
     this.window.addEventListener("popstate", (event) => {

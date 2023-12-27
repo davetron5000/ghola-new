@@ -9,18 +9,14 @@ class HexCodeComponent extends HTMLElement {
     }
   }
 
-  connectedCallback() {
-    this.addNodeFromTemplate({
-      before: ({locator}) => {
-        this.$codeSlot = locator.$e("slot[name='code']")
-      }
-    })
+  beforeAppendTemplate({locator}) {
+    this.$codeSlot = locator.$e("slot[name='code']")
   }
 
   updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
   clearHexCode()         { this.removeAttribute("hex-code") }
 
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

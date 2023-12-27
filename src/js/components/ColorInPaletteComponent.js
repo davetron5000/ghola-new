@@ -22,25 +22,22 @@ class ColorInPaletteComponent extends HTMLElement {
     colorsAdded: {},
   }
 
-  connectedCallback() {
-    this.addNodeFromTemplate({
-      before: ({locator}) => {
-        this.$colorScale = locator.$e("g-color-scale")
-        this.$removeButton = Button.wrap(locator.$e("button[data-remove]"))
-        this.$complementButton = Button.wrap(locator.$e("button[data-complement]"))
-        this.$splitComplementButton = Button.wrap(locator.$e("button[data-split-complement]"))
-        this.$analogousButton = Button.wrap(locator.$e("button[data-analogous]"))
-        this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
-      },
-      after: () => {
-        this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
-        this.$removeButton.onClick( () => this.dispatchRemoved(event.detail) )
-        this.$complementButton.onClick( () => this.dispatchColorsAdded([ this.hexCode.complement() ]) )
-        this.$splitComplementButton.onClick( () => this.dispatchColorsAdded(this.hexCode.splitComplements()) )
-        this.$analogousButton.onClick( () => this.dispatchColorsAdded(this.hexCode.analogous()) )
-        this.$triadButton.onClick( () => this.dispatchColorsAdded(this.hexCode.triad()) )
-      }
-    })
+  beforeAppendTemplate({locator}) {
+    this.$colorScale = locator.$e("g-color-scale")
+    this.$removeButton = Button.wrap(locator.$e("button[data-remove]"))
+    this.$complementButton = Button.wrap(locator.$e("button[data-complement]"))
+    this.$splitComplementButton = Button.wrap(locator.$e("button[data-split-complement]"))
+    this.$analogousButton = Button.wrap(locator.$e("button[data-analogous]"))
+    this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
+  }
+
+  afterAppendTemplate() {
+    this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
+    this.$removeButton.onClick( () => this.dispatchRemoved(event.detail) )
+    this.$complementButton.onClick( () => this.dispatchColorsAdded([ this.hexCode.complement() ]) )
+    this.$splitComplementButton.onClick( () => this.dispatchColorsAdded(this.hexCode.splitComplements()) )
+    this.$analogousButton.onClick( () => this.dispatchColorsAdded(this.hexCode.analogous()) )
+    this.$triadButton.onClick( () => this.dispatchColorsAdded(this.hexCode.triad()) )
   }
 
   disconnectedCallback() {
@@ -52,7 +49,7 @@ class ColorInPaletteComponent extends HTMLElement {
     this.setAttribute("hex-code",hexCode.toString())
   }
 
-  _render() {
+  render() {
     if (!this.$element) {
       return
     }

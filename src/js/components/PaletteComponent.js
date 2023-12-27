@@ -13,6 +13,16 @@ class PaletteComponent extends HTMLElement {
     }
   }
 
+  set primaryHexCode(newValue) {
+    if (!this.palette.primaryHexCode) {
+      this._primaryHexCode = newValue
+    }
+  }
+
+  get primaryHexCode() {
+    return this._primaryHexCode
+  }
+
   constructor() {
     super()
     this.palette = new Palette()
@@ -21,24 +31,21 @@ class PaletteComponent extends HTMLElement {
     this.palette.onReplaced( () => this._replacePalette() )
   }
 
-  connectedCallback() {
-    this.addNodeFromTemplate({
-      before: ({locator}) => {
-        this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
-        this.$colorSection = locator.$e("section")
-      },
-      after: () => {
-        this.$addRandomColorButton.onClick( () => this._addColor() )
-      }
-    })
+  beforeAppendTemplate({locator}) {
+    this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
+    this.$colorSection = locator.$e("section")
+  }
+
+  afterAppendTemplate() {
+    this.$addRandomColorButton.onClick( () => this._addColor() )
+  }
+
+  afterRenderTemplate() {
     this.serializer.load()
+    this.palette.onChanged( () => this.serializer.save() )
   }
 
-  updatePrimaryHexCode(hexCode) {
-    this.setAttribute("primary-hex-code",hexCode ? hexCode.toString() : "")
-  }
-
-  _render() { 
+  render() { 
     if (!this.$element) {
       return
     }
@@ -63,7 +70,9 @@ class PaletteComponent extends HTMLElement {
         event.detail.forEach( (hexCode) => this._addColor(hexCode) )
       })
       primaryColorInPalette.onChanged( (event) => {
-        this.updatePrimaryHexCode(event.detail)
+        const primaryColor = event.detail
+        this.setAttribute("primary-hex-code",primaryColor ? primaryColor.toString() : "")
+        this.palette.primaryColor = primaryColor
       })
     }
 
@@ -127,7 +136,6 @@ class PaletteComponent extends HTMLElement {
   _getIndex(element) {
     const index = parseInt(element.getAttribute("index"))
     if (isNaN(index)) {
-      console.warn("Element %o did not have an index attribute", element)
       return null
     }
     return index
@@ -142,7 +150,7 @@ class PaletteComponent extends HTMLElement {
   _replacePalette() {
 
     if (this.palette.primaryColor) {
-      this.updatePrimaryHexCode(this.palette.primaryColor)
+      this.setAttribute("primary-hex-code",this.palette.primaryColor.toString())
     }
     document.querySelectorAll(ColorInPaletteComponent.tagName).forEach( (element) => {
       if (element.getAttribute("primary") !== "true") {

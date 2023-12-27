@@ -61,10 +61,18 @@ class PaletteComponent extends HTMLElement {
         this.$colorSection,
         {
           primary: true,
+          compact: false,
         }
       )
       primaryColorInPalette.onColorsAdded( (event) => {
-        event.detail.forEach( (hexCode) => this._addColor(hexCode) )
+        const method = event.detail
+        const newColors = [
+          primaryColorInPalette.hexCode[method]()
+        ].flat()
+
+        const newColorsInPalette = newColors.map( (hexCode) => {
+          return this._addColor(hexCode)
+        })
       })
       primaryColorInPalette.onChanged( (event) => {
         const primaryColor = event.detail
@@ -91,11 +99,14 @@ class PaletteComponent extends HTMLElement {
 
     const newColorHexCode = hexCode || this.palette.newColor()
 
+    const attributes = {
+      "hex-code": newColorHexCode.toString(),
+      "compact": false,
+    }
+
     const newColorInPalette = ColorInPaletteComponent.appendNewChild(
       this.$colorSection,
-      {
-        "hex-code": newColorHexCode.toString()
-      }
+      attributes,
     )
 
     newColorInPalette.scrollIntoView()
@@ -117,13 +128,19 @@ class PaletteComponent extends HTMLElement {
     })
 
     newColorInPalette.onColorsAdded( (event) => {
-      event.detail.forEach( (hexCode) => this._addColor(hexCode) )
+      const method = event.detail
+      const newColors = [
+        newColorInPalette.hexCode[method]()
+      ].flat()
+      newColors.forEach( (hexCode) => this._addColor(hexCode) )
     })
 
     this._getIndex(newColorInPalette, (index) => {
+      console.log("%d: %s",index,String(newColorHexCode))
       this.palette.changeColor(index,newColorHexCode)
     })
 
+    return newColorInPalette
   }
 
   _getIndex(element,ifIndexExists) {

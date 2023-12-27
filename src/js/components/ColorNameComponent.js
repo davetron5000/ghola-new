@@ -16,6 +16,9 @@ class ColorNameComponent extends HTMLElement {
 
   updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
   clearHexCode()         { this.removeAttribute("hex-code") }
+  hide()  { this.style.display = "none" }
+  show()  { this.style.display = "block" }
+
 
   render() {
     if (!this.$element) {

@@ -32,7 +32,7 @@ class Button extends NonCustomElement {
   }
   show() {
     if (this.hidden) {
-      this.element.style.display = this._display
+      this.element.style.display = this.display
       this.hidden = false
     }
   }

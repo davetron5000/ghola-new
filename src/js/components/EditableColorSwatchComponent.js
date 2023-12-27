@@ -13,7 +13,10 @@ class EditableColorSwatchComponent extends HTMLElement {
     "description": { },
     "editable": {
       value: (newValue) => newValue == "true",
-    }
+    },
+    "compact": {
+      value: (newValue) => newValue == "true",
+    },
   }
 
   static events = {
@@ -45,9 +48,10 @@ class EditableColorSwatchComponent extends HTMLElement {
     })
   }
 
-  updateHexCode(hexCode, description) {
+  update({hexCode, description, compact}) {
     this.setAttribute("hex-code",hexCode.toString())
     this.setAttribute("description",description)
+    this.setAttribute("compact",compact)
   }
 
   render() {
@@ -74,6 +78,16 @@ class EditableColorSwatchComponent extends HTMLElement {
       this.$input.removeLabel()
       this.$inputLabel.removeAttribute("for")
       this.$inputLabel.textContent = ""
+    }
+    if (this.compact) {
+      this.$colorName.hide()
+      this.$input.classList.remove("h-5")
+      this.$input.classList.add("h-3")
+    }
+    else {
+      this.$colorName.show()
+      this.$input.classList.remove("h-3")
+      this.$input.classList.add("h-5")
     }
     this.$input.editable = this.editable
   }

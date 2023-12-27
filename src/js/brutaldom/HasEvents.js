@@ -1,6 +1,18 @@
-capitalize = (string) => {
+const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+const debounce = function(callback, wait) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(context, args)
+    }, wait)
+  }
+}
+
 const hasEventsMixin = {
   removeEventListeners() {
     if (!this.eventListeners) {
@@ -12,7 +24,6 @@ const hasEventsMixin = {
       })
     }
   }
-  
 }
 const HasEvents = {
   mixInto(klass) {
@@ -46,8 +57,15 @@ const HasEvents = {
         this.addEventListener(key,listener)
         this.eventListeners[key].push(listener)
       }
-      klass.prototype[dispatchMethodName] = function(detail) {
+      const dispatchFunction = function(detail) {
         this.dispatchEvent(new CustomEvent(key, { detail }))
+      }
+      if (value.debounce) {
+        const timeout = Number.isInteger(value.debounce) ? value.debounce : 500
+        klass.prototype[dispatchMethodName] = debounce(dispatchFunction, timeout)
+      }
+      else {
+        klass.prototype[dispatchMethodName] = dispatchFunction
       }
       klass.prototype[debugMethodName] = function() {
         this[onMethodName]( (event) => {

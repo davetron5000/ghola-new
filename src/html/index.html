@@ -24,7 +24,7 @@
       </code>
     </template>
     <template id="g-color-swatch-input">
-      <input class="h-5 w-100 bn bw-0 pa-0 pointer" type="color" />
+      <input class="h-100 w-100 bn bw-0 pa-0 pointer" type="color" />
     </template>
     <template id="g-color-name">
       <div class="ttu f-1 gray-darker fw-5 nowrap tl mt-2 ph-2 lh-solid h-2-lines flex items-end">
@@ -40,14 +40,14 @@
       </form>
     </template>
     <template id="g-color-scale">
-      <div class="flex items-center justify-center pa-3 gap-2 ba bc-gray-lighter bg-white br-1">
+      <div class="flex items-center justify-center pa-3 gap-2 ba bc-gray-light bg-white br-2">
       </div>
     </template>
     <template id="g-color-in-palette">
-      <div class="flex items-center justify-center pa-3 bn br-1 shadow-1 bg-gray-lightest">
-        <nav class="flex flex-column pa-3 bl bt bb br-1 bc-gray-lighter bg-white">
+      <div class="flex items-start justify-center pa-3 bn br-1 shadow-1 bg-gray-lightest">
+        <nav class="flex flex-column pa-3 w-20">
           <%- include("templates/small-button.html", {
-                additionalClass: "mb-1",
+                additionalButtonClass: "mb-1",
                 data: "complement",
                 label: "Add Complement",
                 icon: {
@@ -56,7 +56,7 @@
                 }
               }) %>
           <%- include("templates/small-button.html", {
-                additionalClass: "mb-1",
+                additionalButtonClass: "mb-1",
                 data: "split-complement",
                 label: "Add Split Complement",
                 icon: {
@@ -65,7 +65,7 @@
                 }
               }) %>
           <%- include("templates/small-button.html", {
-                additionalClass: "mb-1",
+                additionalButtonClass: "mb-1",
                 data: "analogous",
                 label: "Add Analogous",
                 icon: {
@@ -81,8 +81,7 @@
                   description: "Triangle",
                 }
               }) %>
-          <%- include("templates/regular-button.html", {
-                additionalButtonClass: "mt-3",
+          <%- include("templates/small-button.html", {
                 accentColor: "red",
                 data: "remove",
                 label: "Remove Color",

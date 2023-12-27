@@ -10,6 +10,9 @@ import EditableColorSwatchComponent from "./EditableColorSwatchComponent"
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": { value: HexCode },
+    "compact": {
+      value: (newValue) => newValue == "true",
+    },
   }
   static events = {
     baseColorChange: {}
@@ -30,6 +33,9 @@ class ColorScaleComponent extends HTMLElement {
     this.dispatchBaseColorChange(hexCode)
   }
 
+  makeNormalSize() { this.setAttribute("compact", false) }
+  makeCompact() { this.setAttribute("compact", true) }
+
   render() {
     if (!this.$element) {
       return
@@ -39,11 +45,20 @@ class ColorScaleComponent extends HTMLElement {
         this.$editableColorSwatches = this._createSwatches()
       }
       this.$editableColorSwatches.forEach( ($editableColorSwatch, index) => {
-        $editableColorSwatch.updateHexCode(
-          this.colorScale.color(index),
-          `${this.name} level ${index}`
-        )
+        $editableColorSwatch.update({
+          hexCode: this.colorScale.color(index),
+          description: `${this.name} level ${index}`,
+          compact: this.compact
+        })
       })
+    }
+    if (this.compact) {
+      this.$element.classList.remove("pa-3", "gap-2")
+      this.$element.classList.add("pa-1")
+    }
+    else {
+      this.$element.classList.add("pa-3", "gap-2")
+      this.$element.classList.remove("pa-1")
     }
   }
 

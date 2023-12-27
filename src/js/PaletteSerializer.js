@@ -1,4 +1,4 @@
-import HexCode       from "./dataTypes/HexCode"
+import HexCode from "./dataTypes/HexCode"
 
 export default class PaletteSerializer {
 
@@ -38,9 +38,13 @@ export default class PaletteSerializer {
 
   load() {
     const url = new URL(this.window.location);
+    const otherColors = (url.searchParams.get("otherColors") || "").split(",").
+      map( (string) => HexCode.fromString(string) ).
+      filter( (possiblyNullHexCode) => possiblyNullHexCode )
+
     this.palette.replace(
       HexCode.fromString(url.searchParams.get("primaryColor")),
-      (url.searchParams.get("otherColors") || "").split(",").map( (string) => HexCode.fromString(string) )
+      otherColors
     )
   }
 }

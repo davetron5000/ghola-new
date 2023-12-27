@@ -14,9 +14,13 @@ class Palette extends EventTarget {
   }
 
   replace(primaryColor,otherColors) {
+    window.HexCode = HexCode
     this.hexCodes = [
       primaryColor
-    ].concat(otherColors)
+    ]
+    otherColors.forEach( (color) => {
+      this.hexCodes.push(color)
+    })
     this.dispatchReplaced()
   }
 

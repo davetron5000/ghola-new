@@ -3,6 +3,8 @@ import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 import HasRequiredChildElements from "../brutaldom/HasRequiredChildElements"
+import IsCreatable from "../brutaldom/IsCreatable"
+import Button from "./Button"
 
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
@@ -21,63 +23,47 @@ class ColorInPaletteComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    this._debugColorsAdded()
     this.addNodeFromTemplate({
       before: ({locator}) => {
         this.$colorScale = locator.$e("g-color-scale")
-        this.$removeButton = locator.$e("button[data-remove]")
-        this.$complementButton = locator.$e("button[data-complement]")
-        this.$splitComplementButton = locator.$e("button[data-split-complement]")
-        this.$analogousButton = locator.$e("button[data-analogous]")
-        this.$triadButton = locator.$e("button[data-triad]")
+        this.$removeButton = Button.wrap(locator.$e("button[data-remove]"))
+        this.$complementButton = Button.wrap(locator.$e("button[data-complement]"))
+        this.$splitComplementButton = Button.wrap(locator.$e("button[data-split-complement]"))
+        this.$analogousButton = Button.wrap(locator.$e("button[data-analogous]"))
+        this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
       },
       after: () => {
         this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
-        this.$removeButton.addEventListener("click", (event) => {
-          event.preventDefault()
-          this.dispatchRemoved(event.detail)
-        })
-        this.$complementButton.addEventListener("click", (event) => {
-          event.preventDefault()
-          this.dispatchColorsAdded([ this.hexCode.complement() ])
-        })
-        this.$splitComplementButton.addEventListener("click", (event) => {
-          event.preventDefault()
-          this.dispatchColorsAdded(this.hexCode.splitComplements())
-        })
-        this.$analogousButton.addEventListener("click", (event) => {
-          event.preventDefault()
-          this.dispatchColorsAdded(this.hexCode.analogous())
-        })
-        this.$triadButton.addEventListener("click", (event) => {
-          event.preventDefault()
-          this.dispatchColorsAdded(this.hexCode.triad())
-        })
+        this.$removeButton.onClick( () => this.dispatchRemoved(event.detail) )
+        this.$complementButton.onClick( () => this.dispatchColorsAdded([ this.hexCode.complement() ]) )
+        this.$splitComplementButton.onClick( () => this.dispatchColorsAdded(this.hexCode.splitComplements()) )
+        this.$analogousButton.onClick( () => this.dispatchColorsAdded(this.hexCode.analogous()) )
+        this.$triadButton.onClick( () => this.dispatchColorsAdded(this.hexCode.triad()) )
       }
     })
   }
 
   disconnectedCallback() {
     this.removeEventListeners()
-    this.$removeButton.removeEventListener("click", this.removeButtonClickListener)
+    this.$removeButton.disconnectedCallback()
   }
 
-  applyLightnessFrom(colorInPalette) {
-    this.$colorScale.applyLightnessFrom(colorInPalette.$colorScale)
+  updateHexCode(hexCode) {
+    this.setAttribute("hex-code",hexCode.toString())
   }
-  
+
   _render() {
     if (!this.$element) {
       return
     }
     if (this.hexCode) {
-      this.$colorScale.setAttribute("hex-code", this.hexCode.toString())
+      this.$colorScale.updateBaseColor(this.hexCode)
     }
     if (this.primary) {
-      this.$removeButton.style.display = "none"
+      this.$removeButton.hide()
     }
     else {
-      this.$removeButton.style.display = "block"
+      this.$removeButton.show()
     }
   }
 
@@ -89,4 +75,5 @@ class ColorInPaletteComponent extends HTMLElement {
 HasTemplate.mixInto(ColorInPaletteComponent)
 HasAttributes.mixInto(ColorInPaletteComponent)
 HasEvents.mixInto(ColorInPaletteComponent)
+IsCreatable.mixInto(ColorInPaletteComponent)
 export default ColorInPaletteComponent

@@ -5,6 +5,8 @@ import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 import ColorScale from "../dataTypes/ColorScale"
 
+import EditableColorSwatchComponent from "./EditableColorSwatchComponent"
+
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": { value: HexCode },
@@ -23,22 +25,13 @@ class ColorScaleComponent extends HTMLElement {
     this.name = new ColorName(hexCode).toString()
   }
 
+  updateBaseColor(hexCode) {
+    this.setAttribute("hex-code", hexCode.toString())
+    this.dispatchBaseColorChange(hexCode)
+  }
+
   connectedCallback() {
     this.addNodeFromTemplate()
-  }
-
-  applyLightnessFrom($colorScale) {
-    this.$lightnessBasedOnColorScale = $colorScale
-    if (this.colorScale && $colorScale.colorScale) {
-      this.colorScale = this.colorScale.matchLightness($colorScale.colorScale)
-      this._render()
-    }
-  }
-
-
-  _updateSwatch(swatch,index) {
-    swatch.setAttribute("hex-code", this.colorScale.color(index).toString())
-    swatch.setAttribute("description", `${this.name} level ${index}`)
   }
 
   _render() {
@@ -46,28 +39,33 @@ class ColorScaleComponent extends HTMLElement {
       return
     }
     if (this.name && this.colorScale) {
-      if (!this.swatches) {
-        this.swatches = this._createSwatches()
+      if (!this.$editableColorSwatches) {
+        this.$editableColorSwatches = this._createSwatches()
       }
-      this.swatches.forEach( (swatch, index) => this._updateSwatch(swatch,index) )
+      this.$editableColorSwatches.forEach( ($editableColorSwatch, index) => {
+        $editableColorSwatch.updateHexCode(
+          this.colorScale.color(index),
+          `${this.name} level ${index}`
+        )
+      })
     }
   }
+
   _createSwatches() {
     const middle = (this.colorScale.length - 1) / 2
     return this.colorScale.map( (hexCode,index) => {
-      const swatch = document.createElement("g-editable-color-swatch")
-      this.$element.appendChild(swatch)
+      const $editableColorSwatch = EditableColorSwatchComponent.appendNewChild(
+        this.$element,
+        {
+          editable: index == middle,
+        }
+      )
       if (index == middle) {
-        swatch.setAttribute("editable", true)
-        swatch.onHexCodeChanged( (event) => {
-          this.setAttribute("hex-code",event.detail.toString())
-          this.dispatchBaseColorChange(event.detail)
+        $editableColorSwatch.onHexCodeChanged( (event) => {
+          this.updateBaseColor(event.detail)
         })
       }
-      else {
-        swatch.setAttribute("editable", false)
-      }
-      return swatch
+      return $editableColorSwatch
     })
   }
 

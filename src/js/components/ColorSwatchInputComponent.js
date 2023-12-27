@@ -19,6 +19,12 @@ class ColorSwatchInputComponent extends HTMLElement {
     hexCodeChanged: {}
   }
 
+  updateValue(hexCode) { this.setAttribute("value",hexCode.toString()) }
+  clearValue() { this.removeAttribute("value") }
+
+  setLabel($label) { this.setAttribute("labelled-by",$label.getAttribute("for")) }
+  removeLabel($label) { this.removeAttribute("labelled-by") }
+
   connectedCallback() {
     this.addNodeFromTemplate({
       after: ({element}) => {
@@ -47,10 +53,6 @@ class ColorSwatchInputComponent extends HTMLElement {
     if (this.hexCode) {
       this.$element.value = this.hexCode.toString()
       this.$element.setAttribute("value",this.hexCode.toString())
-      const detail = {
-        value: this.hexCode,
-        isDefault: this.$element.getAttribute("value") == this.hexCode.toString(),
-      }
     }
     else {
       this.$element.textContent = ""

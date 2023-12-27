@@ -29,6 +29,13 @@ export default class HexCode {
   static random() {
     return new HexCode(chroma.random().hex())
   }
+  static nextId() {
+    if (!this._nextId) {
+      this._nextId = 0
+    }
+    this._nextId = this._nextId + 1
+    return this._nextId;
+  }
 
   constructor(string) {
     const [matches, _hash, hexCode] = string.match(HexCode.REGEXP)
@@ -36,6 +43,7 @@ export default class HexCode {
       throw `'${string}' is not a valid hex code`
     }
     this.hexCode = `#${hexCode}`.toUpperCase()
+    this.objectId = HexCode.nextId()
   }
 
   toString() { return this.hexCode }

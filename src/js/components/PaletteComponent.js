@@ -1,25 +1,15 @@
-import HasTemplate   from "../brutaldom/HasTemplate"
-import HasAttributes from "../brutaldom/HasAttributes"
-import HasEvents     from "../brutaldom/HasEvents"
-import HexCode       from "../dataTypes/HexCode"
-import Palette       from "../dataTypes/Palette"
-
+import HasTemplate             from "../brutaldom/HasTemplate"
+import HasAttributes           from "../brutaldom/HasAttributes"
+import HexCode                 from "../dataTypes/HexCode"
+import Palette                 from "../dataTypes/Palette"
 import ColorInPaletteComponent from "./ColorInPaletteComponent"
-import PaletteSerializer from "../PaletteSerializer"
+import PaletteSerializer       from "../PaletteSerializer"
 
 class PaletteComponent extends HTMLElement {
   static attributeListeners = {
     "primary-hex-code": {
       value: HexCode,
-      debug: true,
     }
-  }
-
-  static events = {
-    primaryHexCodeChanged: {},
-    colorAdded: {},
-    colorRemoved: {},
-    colorChanged: {},
   }
 
   constructor() {
@@ -27,13 +17,7 @@ class PaletteComponent extends HTMLElement {
     this.palette = new Palette()
     this.serializer = new PaletteSerializer(this.palette, window)
 
-    this.onPrimaryHexCodeChanged( (event) => this.palette.primaryColor = event.detail )
-    this.onColorAdded( (event) => this.palette.changeColor(event.detail.index,event.detail.hexCode))
-    this.onColorChanged( (event) => this.palette.changeColor(event.detail.index,event.detail.hexCode))
-    this.onColorRemoved( (event) => this.palette.removeColor(event.detail.index))
-    this.palette.onReplaced( (event) => {
-      this._replacePalette() 
-    })
+    this.palette.onReplaced( () => this._replacePalette() )
   }
 
   connectedCallback() {
@@ -44,75 +28,86 @@ class PaletteComponent extends HTMLElement {
       },
       after: () => {
         this.$addRandomColorButton.onClick( () => this._addColor() )
-        this.serializer.load()
       }
     })
-    this._replacePalette()
+    this.serializer.load()
   }
 
+  updatePrimaryHexCode(hexCode) {
+    this.setAttribute("primary-hex-code",hexCode ? hexCode.toString() : "")
+  }
 
   _render() { 
     if (!this.$element) {
       return
     }
-
-    let primaryColorInPalette = this.$element.querySelector(`${ColorInPaletteComponent.tagName}[primary='true']`)
     if (this.primaryHexCode) {
-      if (!primaryColorInPalette) {
-        primaryColorInPalette = document.createElement(ColorInPaletteComponent.tagName)
-        primaryColorInPalette.setAttribute("primary", true)
-        this.$colorSection.appendChild(primaryColorInPalette)
-        primaryColorInPalette.onColorsAdded( (event) => {
-          event.detail.forEach( (hexCode) => this._addColor(hexCode) )
-        })
-        primaryColorInPalette.onChanged( (event) => {
-          const hexCode = event.detail
-          this.setAttribute("primary-hex-code",hexCode ? hexCode.toString() : "")
-          this.dispatchPrimaryHexCodeChanged(hexCode)
-        })
-      }
-
-      primaryColorInPalette.setAttribute("hex-code", this.primaryHexCode.toString())
-      this.dispatchPrimaryHexCodeChanged(this.primaryHexCode)
-
+      this._ensurePrimaryColorInPalette()
     }
     else {
-      if (primaryColorInPalette) {
-        this.$colorSection.removeChild(primaryColorInPalette)
-        this.dispatchPrimaryHexCodeChanged(null)
-      }
+      this._removePrimaryColorInPalette()
     }
   }
+
+  _ensurePrimaryColorInPalette() {
+    let primaryColorInPalette = this.$element.querySelector(`${ColorInPaletteComponent.tagName}[primary='true']`)
+    if (!primaryColorInPalette) {
+      primaryColorInPalette = ColorInPaletteComponent.appendNewChild(
+        this.$colorSection,
+        {
+          primary: true,
+        }
+      )
+      primaryColorInPalette.onColorsAdded( (event) => {
+        event.detail.forEach( (hexCode) => this._addColor(hexCode) )
+      })
+      primaryColorInPalette.onChanged( (event) => {
+        this.updatePrimaryHexCode(event.detail)
+      })
+    }
+
+    primaryColorInPalette.updateHexCode(this.primaryHexCode)
+  }
+   
+  _removePrimaryColorInPalette() {
+    let primaryColorInPalette = this.$element.querySelector(`${ColorInPaletteComponent.tagName}[primary='true']`)
+    if (primaryColorInPalette) {
+      this.$colorSection.removeChild(primaryColorInPalette)
+    }
+  }
+
+
 
   _addColor(hexCode) {
     if (!this.$element) {
       return
     }
 
-    const newColorInPalette = document.createElement(ColorInPaletteComponent.tagName)
     const newColorHexCode = hexCode || this.palette.newColor()
-    newColorInPalette.setAttribute("hex-code", newColorHexCode.toString())
-    this.$colorSection.appendChild(newColorInPalette)
+
+    const newColorInPalette = ColorInPaletteComponent.appendNewChild(
+      this.$colorSection,
+      {
+        "hex-code": newColorHexCode.toString()
+      }
+    )
+
     newColorInPalette.scrollIntoView()
 
     this._addIndexes()
 
-
     newColorInPalette.onChanged( (event) => {
       const index = this._getIndex(newColorInPalette)
       if (index) {
-        this.dispatchColorChanged({ index: index, hexCode: event.detail })
+        this.palette.changeColor(index,event.detail)
       }
     })
 
     newColorInPalette.onRemoved( (event) => {
       const index = this._getIndex(newColorInPalette)
       if (index) {
-        this.dispatchColorRemoved({ index: index }) 
+        this.palette.removeColor(index)
       }
-    })
-
-    newColorInPalette.onRemoved( (event) => {
       this.$colorSection.removeChild(newColorInPalette) 
       this._addIndexes()
     })
@@ -123,7 +118,7 @@ class PaletteComponent extends HTMLElement {
 
     const index = this._getIndex(newColorInPalette)
     if (index) {
-      this.dispatchColorAdded({ index: index, hexCode: newColorHexCode})
+      this.palette.changeColor(index,newColorHexCode)
     }
 
   }
@@ -146,7 +141,7 @@ class PaletteComponent extends HTMLElement {
   _replacePalette() {
 
     if (this.palette.primaryColor) {
-      this.setAttribute("primary-hex-code", this.palette.primaryColor.toString())
+      this.updatePrimaryHexCode(this.palette.primaryColor)
     }
     document.querySelectorAll(ColorInPaletteComponent.tagName).forEach( (element) => {
       if (element.getAttribute("primary") !== "true") {
@@ -168,6 +163,5 @@ class PaletteComponent extends HTMLElement {
 }
 HasTemplate.mixInto(PaletteComponent)
 HasAttributes.mixInto(PaletteComponent)
-HasEvents.mixInto(PaletteComponent)
 
 export default PaletteComponent

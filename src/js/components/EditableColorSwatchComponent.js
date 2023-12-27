@@ -3,6 +3,7 @@ import HTMLId from "../dataTypes/HTMLId"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
+import IsCreatable from "../brutaldom/IsCreatable"
 
 class EditableColorSwatchComponent extends HTMLElement {
   static attributeListeners = {
@@ -34,12 +35,17 @@ class EditableColorSwatchComponent extends HTMLElement {
         this.$colorName = locator.$e("g-color-name")
       },
       after: ({element}) => {
-        this.$input.onHexCodeChanged( (event) => this.$hexCode.setAttribute("hex-code",event.detail.toString()) )
-        this.$input.onHexCodeChanged( (event) => this.$colorName.setAttribute("hex-code",event.detail.toString()) )
+        this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
+        this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
         this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
         element.addEventListener("submit", (event) =>  event.preventDefault() )
       },
     })
+  }
+
+  updateHexCode(hexCode, description) {
+    this.setAttribute("hex-code",hexCode.toString())
+    this.setAttribute("description",description)
   }
 
   _render() {
@@ -47,23 +53,23 @@ class EditableColorSwatchComponent extends HTMLElement {
       return
     }
     if (this.hexCode) {
-      this.$input.setAttribute("value",this.hexCode)
-      this.$hexCode.setAttribute("hex-code",this.hexCode)
-      this.$colorName.setAttribute("hex-code",this.hexCode)
+      this.$input.updateValue(this.hexCode)
+      this.$hexCode.updateHexCode(this.hexCode)
+      this.$colorName.updateHexCode(this.hexCode)
     }
     else {
-      this.$input.removeAttribute("value")
-      this.$hexCode.removeAttribute("hex-code")
-      this.$colorName.removeAttribute("hex-code")
+      this.$input.clearValue()
+      this.$hexCode.clearHexCode()
+      this.$colorName.clearHexCode()
     }
     if (this.description) {
       const id = HTMLId.fromString(this.description, { prefix: "color-swatch" })
-      this.$input.setAttribute("labelled-by",id.toString())
       this.$inputLabel.setAttribute("for",id.toString())
       this.$inputLabel.textContent = `Choose color for ${this.description}`
+      this.$input.setLabel(this.$inputLabel)
     }
     else {
-      this.$input.removeAttribute("labelled-by")
+      this.$input.removeLabel()
       this.$inputLabel.removeAttribute("for")
       this.$inputLabel.textContent = ""
     }
@@ -78,4 +84,5 @@ class EditableColorSwatchComponent extends HTMLElement {
 HasTemplate.mixInto(EditableColorSwatchComponent)
 HasAttributes.mixInto(EditableColorSwatchComponent)
 HasEvents.mixInto(EditableColorSwatchComponent)
+IsCreatable.mixInto(EditableColorSwatchComponent)
 export default EditableColorSwatchComponent

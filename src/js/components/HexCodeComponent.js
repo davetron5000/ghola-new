@@ -17,6 +17,9 @@ class HexCodeComponent extends HTMLElement {
     })
   }
 
+  updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
+  clearHexCode()         { this.removeAttribute("hex-code") }
+
   _render() {
     if (!this.$element) {
       return

@@ -1,6 +1,7 @@
 import HasTemplate   from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
+import Button from "./Button"
 
 class AddRandomColorButtonComponent extends HTMLElement {
   static attributeListeners = {
@@ -13,21 +14,12 @@ class AddRandomColorButtonComponent extends HTMLElement {
   connectedCallback() {
     this.addNodeFromTemplate({
       before:({locator}) => {
-        this.$button = locator.$e("button")
-        this.$button.addEventListener("click", (event) => {
-          event.preventDefault()
-          event.stopPropagation()
+        this.$button = Button.wrap(locator.$e("button"))
+        this.$button.onClick( (event) => {
           this.dispatchClick()
         })
       }
     })
-  }
-
-  disable() {
-    this.$button.setAttribute("disabled",true) 
-  }
-  enable() {
-    this.$button.removeAttribute("disabled")
   }
 
   _render() {

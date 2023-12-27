@@ -4,6 +4,7 @@ import HexCode                 from "../dataTypes/HexCode"
 import Palette                 from "../dataTypes/Palette"
 import ColorInPaletteComponent from "./ColorInPaletteComponent"
 import PaletteSerializer       from "../PaletteSerializer"
+import Button                  from "./Button"
 
 class PaletteComponent extends HTMLElement {
   static attributeListeners = {
@@ -23,7 +24,7 @@ class PaletteComponent extends HTMLElement {
   connectedCallback() {
     this.addNodeFromTemplate({
       before: ({locator}) => {
-        this.$addRandomColorButton = locator.$e("g-add-random-color-button")
+        this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
         this.$colorSection = locator.$e("section")
       },
       after: () => {

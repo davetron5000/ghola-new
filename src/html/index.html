@@ -94,36 +94,33 @@
         <g-color-scale></g-color-scale>
       </div>
     </template>
-    <template id="g-add-random-color-button">
-      <g-pe-button-accent color="blue">
-        <button class="shadow-button pointer f-3 ph-3 pv-2 tc ba br-3 lh-solid flex items-center">
-          <div role="none" class="mr-2">
-            <div class="flex">
-              <span class="br-tl-2 h-1 w-1 bg-blue"></span>
-              <span class="h-1 w-1 bg-green"></span>
-              <span class="br-tr-2 h-1 w-1 bg-gray"></span>
-            </div>
-            <div class="flex">
-              <span class="h-1 w-1 bg-purple"></span>
-              <span class="h-1 w-1 bg-yellow"></span>
-              <span class="h-1 w-1 bg-black"></span>
-            </div>
-            <div class="flex">
-              <span class="br-bl-2 h-1 w-1 bg-red"></span>
-              <span class="h-1 w-1 bg-white"></span>
-              <span class="br-br-2 h-1 w-1 bg-orange"></span>
-            </div>
-          </div>
-          Add Random Color
-        </button>
-      </g-pe-button-accent>
-    </template>
     <template id="g-palette">
       <article>
         <section class="flex flex-column gap-3">
         </section>
         <nav class="flex items-center justify-center pa-3 gap-3">
-          <g-add-random-color-button accent="blue" name="color"></g-add-random-color-button>
+          <g-pe-button-accent color="blue">
+            <button data-add-random-color class="shadow-button pointer f-3 ph-3 pv-2 tc ba br-3 lh-solid flex items-center">
+              <div role="none" class="mr-2">
+                <div class="flex">
+                  <span class="br-tl-2 h-1 w-1 bg-blue"></span>
+                  <span class="h-1 w-1 bg-green"></span>
+                  <span class="br-tr-2 h-1 w-1 bg-gray"></span>
+                </div>
+                <div class="flex">
+                  <span class="h-1 w-1 bg-purple"></span>
+                  <span class="h-1 w-1 bg-yellow"></span>
+                  <span class="h-1 w-1 bg-black"></span>
+                </div>
+                <div class="flex">
+                  <span class="br-bl-2 h-1 w-1 bg-red"></span>
+                  <span class="h-1 w-1 bg-white"></span>
+                  <span class="br-br-2 h-1 w-1 bg-orange"></span>
+                </div>
+              </div>
+              Add Random Color
+            </button>
+          </g-pe-button-accent>
         </nav>
       </article>
     </template>

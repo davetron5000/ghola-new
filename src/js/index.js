@@ -5,7 +5,6 @@ import ColorNameComponent            from "./components/ColorNameComponent"
 import ColorScaleComponent           from "./components/ColorScaleComponent"
 import ButtonAccentEnhancement       from "./components/enhancements/ButtonAccentEnhancement"
 import ColorInPaletteComponent       from "./components/ColorInPaletteComponent"
-import AddRandomColorButtonComponent from "./components/AddRandomColorButtonComponent"
 import PaletteComponent              from "./components/PaletteComponent"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,6 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
   ColorScaleComponent.define()
   ButtonAccentEnhancement.define()
   ColorInPaletteComponent.define()
-  AddRandomColorButtonComponent.define()
   PaletteComponent.define()
 })

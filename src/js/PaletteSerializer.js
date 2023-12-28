@@ -28,6 +28,7 @@ export default class PaletteSerializer {
       url.searchParams.set("primaryColor", state.primaryColor)
     }
     url.searchParams.set("otherColors", state.otherColors.join(","))
+    console.log("pushstate")
     history.pushState(
       state,
       "",

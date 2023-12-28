@@ -34,12 +34,12 @@ class PaletteComponent extends HTMLElement {
   afterAppendTemplate({locator}) {
     this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
     this.$colorSection = locator.$e("section")
-    this.$addRandomColorButton.onClick( () => this._addColor() )
+    this.$addRandomColorButton.onClick( () => this._addColor(this.palette.newColor()) )
   }
 
   afterRenderTemplate() {
     this.serializer.load()
-    this.palette.onChanged( () => this.serializer.save() )
+    this.palette.onChanged( () => this.serializer.save(), { debounce: 500 } )
   }
 
   render() { 
@@ -97,10 +97,10 @@ class PaletteComponent extends HTMLElement {
       return
     }
 
-    const newColorHexCode = hexCode || this.palette.newColor()
+    const newColorHexCode = hexCode
 
     const attributes = {
-      "hex-code": newColorHexCode.toString(),
+      "hex-code": newColorHexCode,
       "compact": false,
     }
 
@@ -136,7 +136,6 @@ class PaletteComponent extends HTMLElement {
     })
 
     this._getIndex(newColorInPalette, (index) => {
-      console.log("%d: %s",index,String(newColorHexCode))
       this.palette.changeColor(index,newColorHexCode)
     })
 

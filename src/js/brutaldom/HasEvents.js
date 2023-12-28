@@ -2,7 +2,7 @@ const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const debounce = function(callback, wait) {
+const makeDebounced = function(callback, wait) {
   let timeout;
   return function(...args) {
     const context = this;
@@ -30,10 +30,10 @@ const HasEvents = {
     if (!klass.events) {
       throw `In ${klass.name} You must define a static events object to configure which events you expose`
     }
+    const debug = klass.DEBUG_EVENTS
     for (const [key,value] of Object.entries(klass.events)) {
       const onMethodName = `on${capitalize(key)}`
       const dispatchMethodName = `dispatch${capitalize(key)}`
-      const debugMethodName = `_debug${capitalize(key)}`
 
       if (klass.prototype[onMethodName]) {
         throw `${klass.name} already has a method named ${onMethodName}, which clases with the event ${key}`
@@ -43,35 +43,29 @@ const HasEvents = {
         throw `${klass.name} already has a method named ${dispatchMethodName}, which clases with the event ${key}`
       }
 
-      if (klass.prototype[debugMethodName]) {
-        throw `${klass.name} already has a method named ${debugMethodName}, which clases with the event ${key}`
-      }
-
-      klass.prototype[onMethodName] = function(listener) {
+      klass.prototype[onMethodName] = function(listener, { debounce } = {}) {
         if (!this.eventListeners) {
           this.eventListeners = {}
         }
         if (!this.eventListeners[key]) {
           this.eventListeners[key] = []
         }
+        if (debounce) {
+          if (typeof debounce !== "number") {
+            debounce = 500
+          }
+          listener = makeDebounced(listener,debounce)
+        }
         this.addEventListener(key,listener)
         this.eventListeners[key].push(listener)
       }
       const dispatchFunction = function(detail) {
+        if (debug) {
+          console.log(`${this.constructor.name} is dispatching ${key} with details %o`,detail)
+        }
         this.dispatchEvent(new CustomEvent(key, { detail }))
       }
-      if (value.debounce) {
-        const timeout = Number.isInteger(value.debounce) ? value.debounce : 500
-        klass.prototype[dispatchMethodName] = debounce(dispatchFunction, timeout)
-      }
-      else {
-        klass.prototype[dispatchMethodName] = dispatchFunction
-      }
-      klass.prototype[debugMethodName] = function() {
-        this[onMethodName]( (event) => {
-          console.debug(`${key}: %o\n${key}: Event: %o`,event.detail,event)
-        })
-      }
+      klass.prototype[dispatchMethodName] = dispatchFunction
     }
     Object.assign(klass.prototype,hasEventsMixin)
   }

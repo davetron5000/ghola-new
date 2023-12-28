@@ -13,9 +13,9 @@ const hasAttributesMixin = {
     if (attributeListeners && attributeListeners[name]) {
       const attributeName = attributeListeners[name].attributeName || camelCase(name)
       const value = attributeListeners[name].value
-      const debug = attributeListeners[name].debug
+      const debug = attributeListeners[name].debug || this.constructor.DEBUG_ATTRIBUTES
       if (debug) {
-        console.log("HasAttributes: %s changed from %s to %s",name,oldValue,newValue)
+        console.log(`${this.constructor.name}: %s changed from %s to %s`,name,oldValue,newValue)
       }
       if (value && typeof(value) === "function") {
         try {

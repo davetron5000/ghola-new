@@ -1,10 +1,12 @@
 import HexCode from "../dataTypes/HexCode"
+import ColorName from "../dataTypes/ColorName"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 import HasRequiredChildElements from "../brutaldom/HasRequiredChildElements"
 import IsCreatable from "../brutaldom/IsCreatable"
 import Button from "./Button"
+import RichString from "../dataTypes/RichString"
 
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
@@ -31,6 +33,7 @@ class ColorInPaletteComponent extends HTMLElement {
 
     this.$colorScale = locator.$e("g-color-scale")
     this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
+    this.$colorScale.onBaseColorChange( (event) => this.setAttribute("hex-code",event.detail) )
 
     this.$complementButton = Button.wrap(locator.$e("button[data-complement]"))
     this.$complementButton.onClick( () => this.dispatchColorsAdded("complement") )
@@ -43,6 +46,8 @@ class ColorInPaletteComponent extends HTMLElement {
 
     this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
     this.$triadButton.onClick( () => this.dispatchColorsAdded("triad") )
+
+    this.$nameInput = locator.$e("input[name=colorName]")
   }
 
   disconnectedCallback() {
@@ -60,6 +65,7 @@ class ColorInPaletteComponent extends HTMLElement {
     }
     if (this.hexCode) {
       this.$colorScale.updateBaseColor(this.hexCode)
+      this.$nameInput.value = new RichString(new ColorName(this.hexCode).category.broad).humanize()
     }
     if (this.primary) {
       this.$removeButton.hide()

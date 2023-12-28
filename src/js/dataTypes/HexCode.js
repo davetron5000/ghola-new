@@ -57,6 +57,7 @@ export default class HexCode {
   }
 
   hsl() { return chroma(this.hexCode).hsl() }
+  hue() { return this.hsl()[0] }
 
   complement() {
     const [h,s,l] = this.hsl()

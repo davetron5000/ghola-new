@@ -32,7 +32,7 @@
       </div>
     </template>
     <template id="g-editable-color-swatch">
-      <form class="bg-white w-5 flex flex-column pa-0 justify-center ba bc-gray-lightest">
+      <form class="bg-white w-5 flex flex-column pa-0 justify-center ba bc-gray-dark pa-1">
         <label class="ma-0 pa-0 sr-only"></label>
         <g-color-swatch-input></g-color-swatch-input>
         <g-color-name></g-color-name>
@@ -40,14 +40,21 @@
       </form>
     </template>
     <template id="g-color-scale">
-      <div class="flex items-center justify-center pa-3 gap-2 ba bc-gray-light bg-white br-2">
+      <div class="flex items-center justify-center gap-2">
       </div>
     </template>
     <template id="g-color-in-palette">
-      <div class="flex items-start justify-center pa-3 bn br-1 shadow-1 bg-gray-lightest">
-        <nav class="flex flex-column pa-3 w-20">
+      <div class="flex items-start justify-center gap-2">
+        <label class="w-15">
+          <input type="text" class="w-100 inner-shadow-1 f-2 fw-5 pa-2 ba bc-gray-dark bg-white mb-2 br-1">
+          <div class="f-1 i gray-dark">
+            Color Name
+          </div>
+        </label>
+        <g-color-scale></g-color-scale>
+        <nav class="flex flex-column pv-1 mh-2 w-15">
           <%- include("templates/small-button.html", {
-                additionalButtonClass: "mb-1",
+                additionalButtonClass: "mb-1 br-bottom-0",
                 data: "complement",
                 label: "Add Complement",
                 icon: {
@@ -56,7 +63,7 @@
                 }
               }) %>
           <%- include("templates/small-button.html", {
-                additionalButtonClass: "mb-1",
+                additionalButtonClass: "mb-1 br-top-0 br-bottom-0",
                 data: "split-complement",
                 label: "Add Split Complement",
                 icon: {
@@ -65,7 +72,7 @@
                 }
               }) %>
           <%- include("templates/small-button.html", {
-                additionalButtonClass: "mb-1",
+                additionalButtonClass: "mb-1 br-top-0 br-bottom-0",
                 data: "analogous",
                 label: "Add Analogous",
                 icon: {
@@ -74,6 +81,7 @@
                 }
               }) %>
           <%- include("templates/small-button.html", {
+                additionalButtonClass: "br-top-0",
                 data: "triad",
                 label: "Add Triad",
                 icon: {
@@ -90,12 +98,11 @@
                   description:"'x' or times sign" 
                 }}) %>
         </nav>
-        <g-color-scale></g-color-scale>
       </div>
     </template>
     <template id="g-palette">
       <article>
-        <section class="flex flex-column gap-3">
+        <section class="flex flex-column gap-2">
         </section>
         <nav class="flex items-center justify-center pa-3 gap-3">
           <g-pe-button-accent color="blue">
@@ -124,8 +131,30 @@
       </article>
     </template>
   </head>
-  <body class="ff-sans bg-white-ish black-ish pa-3">
-    <g-palette primary-hex-code="#452176"></g-palette>
+  <body class="ff-sans bg-gray-lightest black-ish">
+    <header class="bg-black-ish gray-lightest">
+      <h1 class="ma-0 mh-3 pt-3 f-6 ttu tracked flex items-center gap-3">
+        Ghola
+        <span class="h-3 w-3 bg-red"></span>
+        <span class="h-3 w-3 bg-orange"></span>
+        <span class="h-3 w-3 bg-yellow"></span>
+        <span class="h-3 w-3 bg-green"></span>
+        <span class="h-3 w-3 bg-blue"></span>
+        <span class="h-3 w-3 bg-purple"></span>
+        <span class="h-3 w-3 bg-gray"></span>
+      </h1>
+      <h2 class="ma-0 mh-3 pb-3 f-5">Palette Generator for Developers</h2>
+      <nav class="bg-gray-lighter bb bc-gray-dark black pa-3 flex items-baseline gap-3">
+        <h3 class="f-2 fw-7 ma-0">Download this palette</h3>
+        <a href="#" class="black">Foo</a>
+        <a href="#" class="black">Foo</a>
+        <a href="#" class="black">Foo</a>
+        <a href="#" class="black">Foo</a>
+      </nav>
+    </header>
+    <main class="pa-3">
+      <g-palette primary-hex-code="#452176"></g-palette>
+    </main>
   </body>
 </html>
 

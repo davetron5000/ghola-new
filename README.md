@@ -3,6 +3,11 @@
 ## Features
 
 * Link derived colors e.g. the complement
+  - These cannot be changed
+  - they are labeled as such
+* Name the colors - default based on previous ghola, but allow to change
+* Download CSS
+
 
 ## Web Components
 

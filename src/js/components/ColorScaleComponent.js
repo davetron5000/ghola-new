@@ -53,12 +53,8 @@ class ColorScaleComponent extends HTMLElement {
       })
     }
     if (this.compact) {
-      this.$element.classList.remove("pa-3", "gap-2")
-      this.$element.classList.add("pa-1")
     }
     else {
-      this.$element.classList.add("pa-3", "gap-2")
-      this.$element.classList.remove("pa-1")
     }
   }
 

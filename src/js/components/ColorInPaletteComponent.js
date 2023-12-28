@@ -77,13 +77,9 @@ class ColorInPaletteComponent extends HTMLElement {
     }
     if (this.compact) {
       this.$colorScale.makeCompact()
-      this.$element.classList.remove("pa-3","shadow-1")
-      this.$element.classList.add("pa-1")
     }
     else {
       this.$colorScale.makeNormalSize()
-      this.$element.classList.add("pa-3","shadow-1")
-      this.$element.classList.remove("pa-1")
     }
   }
 

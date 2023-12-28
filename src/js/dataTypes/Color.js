@@ -38,10 +38,10 @@ export default class Color {
     return this._nextId;
   }
 
-  constructor(string) {
-    const [matches, _hash, hexCode] = string.match(Color.REGEXP)
+  constructor(hexCodeAsString) {
+    const [matches, _hash, hexCode] = hexCodeAsString.match(Color.REGEXP)
     if (!matches) {
-      throw `'${string}' is not a valid hex code`
+      throw `'${hexCodeAsString}' is not a valid hex code`
     }
     this.hexCode = `#${hexCode}`.toUpperCase()
     this.objectId = Color.nextId()

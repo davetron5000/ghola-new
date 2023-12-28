@@ -3,7 +3,7 @@ import chroma from "chroma-js"
 import Color from "../dataTypes/Color"
 
 export default class ColorScale {
-  constructor({hexCode,numSteps}) {
+  constructor({baseColor,numSteps}) {
     if (numSteps % 2 == 0) {
       throw `numSteps must be odd`
     }
@@ -11,9 +11,9 @@ export default class ColorScale {
       throw `numSteps must be at least 3`
     }
 
-    this.hexCode          = hexCode
-    this.numSteps         = numSteps
-    this.scale            = this._calculateScale()
+    this.baseColor = baseColor
+    this.numSteps  = numSteps
+    this.scale     = this._calculateScale()
   }
 
   map(f)       { return this.scale.map(f) }
@@ -41,7 +41,7 @@ export default class ColorScale {
 
   _calculateScale() {
     const numColorsToGenerate = this.numSteps * 10
-    const colors = chroma.scale(["black",this.hexCode.toString(),"white"]).
+    const colors = chroma.scale(["black",this.baseColor.toString(),"white"]).
       colors(numColorsToGenerate + 2).
       map( (color) => new Color(color) ).
       slice(1,numColorsToGenerate + 1)
@@ -50,7 +50,7 @@ export default class ColorScale {
     const halfway = (this.numSteps-1) / 2
     for (let i = 0; i < this.numSteps; i++) {
       if (i == halfway) {
-        selectedColors[halfway] = this.hexCode
+        selectedColors[halfway] = this.baseColor
       }
       else {
         selectedColors[i] = colors[Math.floor(colors.length * this._percentForIndex(i,this.numSteps-1))]

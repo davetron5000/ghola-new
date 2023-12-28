@@ -9,42 +9,42 @@ class Palette extends EventTarget {
 
   constructor() {
     super()
-    this.hexCodes = []
+    this.colors = []
   }
 
   replace(primaryColor,otherColors) {
-    this.hexCodes = [
+    this.colors = [
       primaryColor
     ]
     otherColors.forEach( (color) => {
-      this.hexCodes.push(color)
+      this.colors.push(color)
     })
     this.dispatchReplaced()
   }
 
-  set primaryColor(hexCode) {
-    this.changeColor(0,hexCode)
+  set primaryColor(color) {
+    this.changeColor(0,color)
   }
 
   get primaryColor() {
-    return this.hexCodes[0]
+    return this.colors[0]
   }
 
   get otherColors() {
-    return this.hexCodes.slice(1)
+    return this.colors.slice(1)
   }
 
-  changeColor(index,hexCode) {
-    const oldHexCode = this.hexCodes[index]
-    if (oldHexCode && oldHexCode.isEqual(hexCode)) {
+  changeColor(index,color) {
+    const oldColor = this.colors[index]
+    if (oldColor && oldHexCode.isEqual(color)) {
       return
     }
-    this.hexCodes[index] = hexCode
+    this.colors[index] = color
     this.dispatchChanged()
   }
   removeColor(index) {
-    if (this.hexCodes[index]) {
-      this.hexCodes.splice(index,1)
+    if (this.colors[index]) {
+      this.colors.splice(index,1)
       this.dispatchChanged()
     }
   }

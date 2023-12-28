@@ -24,7 +24,7 @@ class ColorScaleComponent extends HTMLElement {
   }
 
   set hexCode(hexCode) {
-    this.colorScale = new ColorScale({ numSteps: this.numSteps, hexCode: hexCode})
+    this.colorScale = new ColorScale({ numSteps: this.numSteps, baseColor: hexCode})
     this.name = new ColorName(hexCode).toString()
   }
 

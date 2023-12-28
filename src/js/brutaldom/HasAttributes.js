@@ -22,7 +22,7 @@ const hasAttributesMixin = {
               this[attributeName] = new value(newValue)
             }
             catch (e2) {
-              console.error(e2)
+              console.error("After attempting to call %o as a function and then calling new on it, got %o",value,e2)
               throw e
             }
           }

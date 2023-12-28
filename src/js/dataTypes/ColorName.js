@@ -4,9 +4,9 @@ import Color from "./Color"
 
 export default class ColorName {
   constructor(hexCode) {
-    hexCode = Color.fromString(hexCode)
-    this.name     = this._bringIntoAtLeastTheFriggin80sFFS(GetColorName(hexCode.toString()))
-    this.category = new ColorCategory(hexCode)
+    const color = Color.fromString(hexCode)
+    this.name     = this._bringIntoAtLeastTheFriggin80sFFS(GetColorName(color.toString()))
+    this.category = new ColorCategory(color)
   }
   toString() { return this.name }
 

@@ -27,11 +27,8 @@ export default class ColorCategory {
     [ "red2"       , new NumericRange(331  ,360) ]   ,
   ]
 
-  constructor(hexCode) {
-    if (!(hexCode instanceof Color)) {
-      throw 'wtf'
-    }
-    const hue = hexCode.hue()
+  constructor(color) {
+    const hue = color.hue()
     if (isNaN(hue)) {
       this.broad = "gray"
       this.narrow = "gray"

@@ -39,7 +39,7 @@ class PaletteComponent extends HTMLElement {
 
   afterRenderTemplate() {
     this.serializer.load()
-    this.palette.onChanged( () => this.serializer.save(), { debounce: 500 } )
+    this.palette.onChanged( () => this.serializer.save(), { debounce: 100 } )
   }
 
   render() { 

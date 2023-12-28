@@ -8,14 +8,15 @@ import IsCreatable from "../brutaldom/IsCreatable"
 class EditableColorSwatchComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: Color,
+      attributeName: "color",
+      klass: Color,
     },
     "description": { },
     "editable": {
-      value: (newValue) => newValue == "true",
+      klass: Boolean,
     },
     "compact": {
-      value: (newValue) => newValue == "true",
+      klass: Boolean,
     },
   }
 
@@ -35,9 +36,9 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.$hexCode = locator.$e("g-hex-code")
 
     this.$input = locator.$e("g-color-swatch-input")
-    this.$input.onHexCodeChanged( (event) => this.$colorName.updateHexCode(event.detail) )
-    this.$input.onHexCodeChanged( (event) => this.$hexCode.updateHexCode(event.detail) )
-    this.$input.onHexCodeChanged( (event) => this.dispatchHexCodeChanged(event.detail) )
+    this.$input.onValueChanged( (event) => this.$colorName.updateColor(Color.fromString(event.detail)) )
+    this.$input.onValueChanged( (event) => this.$hexCode.updateColor(Color.fromString(event.detail)) )
+    this.$input.onValueChanged( (event) => this.dispatchHexCodeChanged(Color.fromString(event.detail)) )
 
     this.$inputLabel = locator.$e("label")
   }
@@ -58,15 +59,15 @@ class EditableColorSwatchComponent extends HTMLElement {
     if (!this.$element) {
       return
     }
-    if (this.hexCode) {
-      this.$input.updateValue(this.hexCode)
-      this.$hexCode.updateHexCode(this.hexCode)
-      this.$colorName.updateHexCode(this.hexCode)
+    if (this.color) {
+      this.$input.updateValue(this.color.toString())
+      this.$hexCode.updateColor(this.color)
+      this.$colorName.updateColor(this.color)
     }
     else {
       this.$input.clearValue()
-      this.$hexCode.clearHexCode()
-      this.$colorName.clearHexCode()
+      this.$hexCode.clearColor()
+      this.$colorName.clearColor()
     }
     if (this.description) {
       const id = HTMLId.fromString(this.description, { prefix: "color-swatch" })

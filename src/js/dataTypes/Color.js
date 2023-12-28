@@ -1,4 +1,5 @@
 import chroma from "chroma-js"
+import ColorName from "./ColorName"
 
 export default class Color {
   static REGEXP = new RegExp("^(#)?([a-fA-F0-9]{6})$")
@@ -45,6 +46,7 @@ export default class Color {
     }
     this.hexCode = `#${hexCode}`.toUpperCase()
     this.objectId = Color.nextId()
+    this.name     = new ColorName(this)
   }
 
   toString() { return this.hexCode }

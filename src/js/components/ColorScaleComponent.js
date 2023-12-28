@@ -9,9 +9,9 @@ import EditableColorSwatchComponent from "./EditableColorSwatchComponent"
 
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
-    "hex-code": { value: Color },
+    "hex-code": { klass: Color },
     "compact": {
-      value: (newValue) => newValue == "true",
+      klass: Boolean,
     },
   }
   static events = {

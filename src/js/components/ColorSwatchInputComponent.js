@@ -3,23 +3,21 @@ import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 
+// XXX: This doesn't need to exist as a web component
 class ColorSwatchInputComponent extends HTMLElement {
   static attributeListeners = {
-    "value": {
-      attributeName: "hexCode",
-      value: Color,
-    },
+    "value": {},
     "labelled-by": {},
     "editable": {
-      value: (x) => x == "true",
+      klass: Boolean,
     }
   }
 
   static events = {
-    hexCodeChanged: {}
+    valueChanged: {}
   }
 
-  updateValue(hexCode) { this.setAttribute("value",hexCode.toString()) }
+  updateValue(hexCode) { this.setAttribute("value",hexCode) }
   clearValue() { this.removeAttribute("value") }
 
   setLabel($label) { this.setAttribute("labelled-by",$label.getAttribute("for")) }
@@ -28,7 +26,7 @@ class ColorSwatchInputComponent extends HTMLElement {
   afterAppendTemplate() {
     this.$element.addEventListener("change", (event) => {
       this.setAttribute("value", this.$element.value)
-      this.dispatchHexCodeChanged(Color.fromString(this.$element.value))
+      this.dispatchValueChanged(this.$element.value)
     })
   }
 
@@ -46,9 +44,9 @@ class ColorSwatchInputComponent extends HTMLElement {
     else {
       this.$element.removeAttribute("id")
     }
-    if (this.hexCode) {
-      this.$element.value = this.hexCode.toString()
-      this.$element.setAttribute("value",this.hexCode.toString())
+    if (this.value) {
+      this.$element.value = this.value
+      this.$element.setAttribute("value",this.value)
     }
     else {
       this.$element.textContent = ""

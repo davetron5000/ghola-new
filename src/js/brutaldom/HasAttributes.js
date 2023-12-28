@@ -7,28 +7,18 @@ const hasAttributesMixin = {
     const attributeListeners = this.constructor.attributeListeners
     if (attributeListeners && attributeListeners[name]) {
       const attributeName = attributeListeners[name].attributeName || new RichString(name).camelize()
-      const value = attributeListeners[name].value
+      const klass = attributeListeners[name].klass
       const debug = attributeListeners[name].debug || this.constructor.DEBUG_ATTRIBUTES
       if (debug) {
         console.log(`${this.constructor.name}: %s changed from %s to %s`,name,oldValue,newValue)
+        console.log(`${this.constructor.name}: Using %o to set %s`,klass, attributeName)
       }
-      if (value && typeof(value) === "function") {
-        try {
-          this[attributeName] = value(newValue)
+      if (klass) {
+        if (klass === Boolean) {
+          this[attributeName] = newValue === "true"
         }
-        catch (e) {
-          if (e instanceof TypeError) {
-            try {
-              this[attributeName] = new value(newValue)
-            }
-            catch (e2) {
-              console.error("After attempting to call %o as a function and then calling new on it, got %o",value,e2)
-              throw e
-            }
-          }
-          else {
-            throw e
-          }
+        else {
+          this[attributeName] = new klass(newValue)
         }
       }
       else {

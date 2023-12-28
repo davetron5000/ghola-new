@@ -36,7 +36,7 @@ class Palette extends EventTarget {
 
   changeColor(index,color) {
     const oldColor = this.colors[index]
-    if (oldColor && oldHexCode.isEqual(color)) {
+    if (oldColor && oldColor.isEqual(color)) {
       return
     }
     this.colors[index] = color

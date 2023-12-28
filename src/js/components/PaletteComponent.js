@@ -9,23 +9,13 @@ import Button                  from "./Button"
 class PaletteComponent extends HTMLElement {
   static attributeListeners = {
     "primary-hex-code": {
-      value: Color,
+      klass: Color,
     }
-  }
-
-  set primaryHexCode(newValue) {
-    if (!this.palette.primaryHexCode) {
-      this._primaryHexCode = newValue
-    }
-  }
-
-  get primaryHexCode() {
-    return this._primaryHexCode
   }
 
   constructor() {
     super()
-    this.palette = new Palette()
+    this.palette    = new Palette()
     this.serializer = new PaletteSerializer(this.palette, window)
 
     this.palette.onReplaced( () => this._replacePalette() )

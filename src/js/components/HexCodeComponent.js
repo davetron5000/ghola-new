@@ -5,7 +5,8 @@ import HasAttributes from "../brutaldom/HasAttributes"
 class HexCodeComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: Color,
+      klass: Color,
+      attributeName: "color",
     }
   }
 
@@ -13,15 +14,15 @@ class HexCodeComponent extends HTMLElement {
     this.$codeSlot = locator.$e("slot[name='code']")
   }
 
-  updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
-  clearHexCode()         { this.removeAttribute("hex-code") }
+  updateColor(color) { this.setAttribute("hex-code", color.toString()) }
+  clearColor()       { this.removeAttribute("hex-code") }
 
   render() {
     if (!this.$element) {
       return
     }
-    if (this.hexCode) {
-      this.$codeSlot.textContent = this.hexCode.toString()
+    if (this.color) {
+      this.$codeSlot.textContent = this.color.toString()
     }
     else {
       this.$codeSlot.textContent = ""

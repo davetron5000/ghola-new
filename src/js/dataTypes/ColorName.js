@@ -3,8 +3,10 @@ import ColorCategory from "./ColorCategory"
 import Color from "./Color"
 
 export default class ColorName {
-  constructor(hexCode) {
-    const color = Color.fromString(hexCode)
+  constructor(color) {
+    if (!(color instanceof Color)) {
+      throw `wtf: ${typeof(color)}`
+    }
     this.name     = this._bringIntoAtLeastTheFriggin80sFFS(GetColorName(color.toString()))
     this.category = new ColorCategory(color)
   }

@@ -21,7 +21,7 @@ export default class PaletteSerializer {
     if (this.palette.primaryColor) {
       state.primaryColor = this.palette.primaryColor.toString()
     }
-    state.otherColors = this.palette.otherColors.map( (hexCode) => hexCode ? hexCode.toString() : "" )
+    state.otherColors = this.palette.otherColors.map( (color) => color ? color.toString() : "" )
     const url = new URL(this.window.location);
 
     if (state.primaryColor) {

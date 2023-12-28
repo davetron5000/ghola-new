@@ -1,12 +1,12 @@
-import ColorName from "../dataTypes/ColorName"
-import HasTemplate from "../brutaldom/HasTemplate"
+import Color         from "../dataTypes/Color"
+import HasTemplate   from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 
 class ColorNameComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      attributeName: "colorName",
-      value: ColorName,
+      attributeName: "color",
+      klass: Color,
     }
   }
 
@@ -14,8 +14,9 @@ class ColorNameComponent extends HTMLElement {
     this.$nameSlot = locator.$e("slot[name='name']")
   }
 
-  updateHexCode(hexCode) { this.setAttribute("hex-code", hexCode.toString()) }
-  clearHexCode()         { this.removeAttribute("hex-code") }
+  updateColor(color) { this.setAttribute("hex-code", color.toString()) }
+  clearColor()       { this.removeAttribute("hex-code") }
+
   hide()  { this.style.display = "none" }
   show()  { this.style.display = "block" }
 
@@ -24,8 +25,8 @@ class ColorNameComponent extends HTMLElement {
     if (!this.$element) {
       return
     }
-    if (this.colorName) {
-      this.$nameSlot.textContent = this.colorName
+    if (this.color) {
+      this.$nameSlot.textContent = this.color.name
     }
     else {
       this.$nameSlot.textContent = ""

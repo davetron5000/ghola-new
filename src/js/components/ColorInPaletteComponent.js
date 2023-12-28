@@ -10,14 +10,16 @@ import RichString from "../brutaldom/RichString"
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: Color,
+      klass: Color,
     },
     "primary": {
-      value: (x) => x === "true"
+      klass: Boolean,
     },
     "compact": {
-      value: (x) => x === "true"
+      klass: Boolean,
     },
+    "color-name": {
+    }
   }
 
   static events = {
@@ -64,7 +66,17 @@ class ColorInPaletteComponent extends HTMLElement {
     }
     if (this.hexCode) {
       this.$colorScale.updateBaseColor(this.hexCode)
-      this.$nameInput.value = new RichString(new ColorName(this.hexCode).category.broad).humanize()
+    }
+    if (this.colorName) {
+      this.$nameInput.value = this.colorName
+    }
+    else {
+      if (this.hexCode) {
+        this.$nameInput.value = new RichString(new ColorName(this.hexCode).category.broad).humanize()
+      }
+      else {
+        this.$nameInput.value = ""
+      }
     }
     if (this.primary) {
       this.$removeButton.hide()

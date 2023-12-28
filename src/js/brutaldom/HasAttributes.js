@@ -1,17 +1,12 @@
+import RichString from "./RichString"
 const noop = () => {}
-const camelCase = (string) => {
-  // Take from camelize npm module
-  return string.replace(/[_.-](\w|$)/g, function (_, x) {
-    return x.toUpperCase();
-  });
-}
 
 const hasAttributesMixin = {
   attributeChangedCallback(name, oldValue, newValue) {
     const valueChanged = oldValue !== newValue
     const attributeListeners = this.constructor.attributeListeners
     if (attributeListeners && attributeListeners[name]) {
-      const attributeName = attributeListeners[name].attributeName || camelCase(name)
+      const attributeName = attributeListeners[name].attributeName || new RichString(name).camelize()
       const value = attributeListeners[name].value
       const debug = attributeListeners[name].debug || this.constructor.DEBUG_ATTRIBUTES
       if (debug) {

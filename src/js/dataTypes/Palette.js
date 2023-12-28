@@ -1,5 +1,4 @@
-
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import HasEvents from "../brutaldom/HasEvents"
 
 class Palette extends EventTarget {
@@ -8,9 +7,9 @@ class Palette extends EventTarget {
     replaced: {},
   }
 
-  constructor(...hexCodes) {
+  constructor() {
     super()
-    this.hexCodes = hexCodes
+    this.hexCodes = []
   }
 
   replace(primaryColor,otherColors) {
@@ -51,7 +50,7 @@ class Palette extends EventTarget {
   }
 
   newColor() {
-    return HexCode.random()
+    return Color.random()
   }
 }
 HasEvents.mixInto(Palette)

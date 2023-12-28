@@ -1,4 +1,4 @@
-import HexCode from "./dataTypes/HexCode"
+import Color from "./dataTypes/Color"
 
 export default class PaletteSerializer {
 
@@ -9,8 +9,8 @@ export default class PaletteSerializer {
     this.window.addEventListener("popstate", (event) => {
       if (event.state) {
         this.palette.replace(
-          HexCode.fromString(event.state.primaryColor),
-          (event.state.otherColors || []).map( (string) => HexCode.fromString(string) ),
+          Color.fromString(event.state.primaryColor),
+          (event.state.otherColors || []).map( (string) => Color.fromString(string) ),
         )
       }
     })
@@ -28,7 +28,6 @@ export default class PaletteSerializer {
       url.searchParams.set("primaryColor", state.primaryColor)
     }
     url.searchParams.set("otherColors", state.otherColors.join(","))
-    console.log("pushstate")
     history.pushState(
       state,
       "",
@@ -39,11 +38,11 @@ export default class PaletteSerializer {
   load() {
     const url = new URL(this.window.location);
     const otherColors = (url.searchParams.get("otherColors") || "").split(",").
-      map( (string) => HexCode.fromString(string) ).
-      filter( (possiblyNullHexCode) => possiblyNullHexCode )
+      map( (string) => Color.fromString(string) ).
+      filter( (possiblyNullColor) => possiblyNullColor )
 
     this.palette.replace(
-      HexCode.fromString(url.searchParams.get("primaryColor")),
+      Color.fromString(url.searchParams.get("primaryColor")),
       otherColors
     )
   }

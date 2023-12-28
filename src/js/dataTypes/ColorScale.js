@@ -1,6 +1,6 @@
 import chroma from "chroma-js"
 
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 
 export default class ColorScale {
   constructor({hexCode,numSteps}) {
@@ -43,7 +43,7 @@ export default class ColorScale {
     const numColorsToGenerate = this.numSteps * 10
     const colors = chroma.scale(["black",this.hexCode.toString(),"white"]).
       colors(numColorsToGenerate + 2).
-      map( (color) => new HexCode(color) ).
+      map( (color) => new Color(color) ).
       slice(1,numColorsToGenerate + 1)
 
     const selectedColors = []

@@ -1,6 +1,4 @@
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+import RichString from "./RichString"
 
 const makeDebounced = function(callback, wait) {
   let timeout;
@@ -32,8 +30,9 @@ const HasEvents = {
     }
     const debug = klass.DEBUG_EVENTS
     for (const [key,value] of Object.entries(klass.events)) {
-      const onMethodName = `on${capitalize(key)}`
-      const dispatchMethodName = `dispatch${capitalize(key)}`
+      const captializedKey = new RichString(key).capitalize()
+      const onMethodName = `on${captializedKey}`
+      const dispatchMethodName = `dispatch${captializedKey}`
 
       if (klass.prototype[onMethodName]) {
         throw `${klass.name} already has a method named ${onMethodName}, which clases with the event ${key}`

@@ -1,5 +1,5 @@
 import NumericRange from "./NumericRange"
-import HexCode from "./HexCode"
+import Color from "./Color"
 
 export default class ColorCategory {
   static broadColorMap = [
@@ -28,7 +28,7 @@ export default class ColorCategory {
   ]
 
   constructor(hexCode) {
-    if (!(hexCode instanceof HexCode)) {
+    if (!(hexCode instanceof Color)) {
       throw 'wtf'
     }
     const hue = hexCode.hue()

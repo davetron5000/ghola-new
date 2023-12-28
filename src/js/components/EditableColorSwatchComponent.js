@@ -1,4 +1,4 @@
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import HTMLId from "../dataTypes/HTMLId"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
@@ -8,7 +8,7 @@ import IsCreatable from "../brutaldom/IsCreatable"
 class EditableColorSwatchComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: HexCode,
+      value: Color,
     },
     "description": { },
     "editable": {

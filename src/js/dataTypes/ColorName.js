@@ -1,10 +1,10 @@
 import { GetColorName } from "hex-color-to-color-name"
 import ColorCategory from "./ColorCategory"
-import HexCode from "./HexCode"
+import Color from "./Color"
 
 export default class ColorName {
   constructor(hexCode) {
-    hexCode = HexCode.fromString(hexCode)
+    hexCode = Color.fromString(hexCode)
     this.name     = this._bringIntoAtLeastTheFriggin80sFFS(GetColorName(hexCode.toString()))
     this.category = new ColorCategory(hexCode)
   }

@@ -1,4 +1,4 @@
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import ColorName from "../dataTypes/ColorName"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
@@ -9,7 +9,7 @@ import EditableColorSwatchComponent from "./EditableColorSwatchComponent"
 
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
-    "hex-code": { value: HexCode },
+    "hex-code": { value: Color },
     "compact": {
       value: (newValue) => newValue == "true",
     },

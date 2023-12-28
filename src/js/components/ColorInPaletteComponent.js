@@ -1,17 +1,16 @@
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import ColorName from "../dataTypes/ColorName"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
-import HasRequiredChildElements from "../brutaldom/HasRequiredChildElements"
 import IsCreatable from "../brutaldom/IsCreatable"
 import Button from "./Button"
-import RichString from "../dataTypes/RichString"
+import RichString from "../brutaldom/RichString"
 
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: HexCode,
+      value: Color,
     },
     "primary": {
       value: (x) => x === "true"

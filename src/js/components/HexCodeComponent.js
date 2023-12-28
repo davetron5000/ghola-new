@@ -1,11 +1,11 @@
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 
 class HexCodeComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
-      value: HexCode,
+      value: Color,
     }
   }
 

@@ -1,4 +1,4 @@
-import HexCode from "../dataTypes/HexCode"
+import Color from "../dataTypes/Color"
 import HasTemplate from "../brutaldom/HasTemplate"
 import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
@@ -7,7 +7,7 @@ class ColorSwatchInputComponent extends HTMLElement {
   static attributeListeners = {
     "value": {
       attributeName: "hexCode",
-      value: HexCode,
+      value: Color,
     },
     "labelled-by": {},
     "editable": {
@@ -28,7 +28,7 @@ class ColorSwatchInputComponent extends HTMLElement {
   afterAppendTemplate() {
     this.$element.addEventListener("change", (event) => {
       this.setAttribute("value", this.$element.value)
-      this.dispatchHexCodeChanged(HexCode.fromString(this.$element.value))
+      this.dispatchHexCodeChanged(Color.fromString(this.$element.value))
     })
   }
 

@@ -1,6 +1,6 @@
 import HasTemplate             from "../brutaldom/HasTemplate"
 import HasAttributes           from "../brutaldom/HasAttributes"
-import HexCode                 from "../dataTypes/HexCode"
+import Color                   from "../dataTypes/Color"
 import Palette                 from "../dataTypes/Palette"
 import ColorInPaletteComponent from "./ColorInPaletteComponent"
 import PaletteSerializer       from "../PaletteSerializer"
@@ -9,7 +9,7 @@ import Button                  from "./Button"
 class PaletteComponent extends HTMLElement {
   static attributeListeners = {
     "primary-hex-code": {
-      value: HexCode,
+      value: Color,
     }
   }
 

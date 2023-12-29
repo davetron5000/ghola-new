@@ -1,4 +1,5 @@
 import RichString from "./RichString"
+import TypeOf     from "./TypeOf"
 const noop = () => {}
 
 const hasAttributesMixin = {
@@ -10,7 +11,10 @@ const hasAttributesMixin = {
       const klass = attributeListeners[name].klass
       const debug = attributeListeners[name].debug || this.constructor.DEBUG_ATTRIBUTES
       if (debug) {
-        console.log(`${this.constructor.name}: %s changed from %s to %s (%s)`,name,oldValue,newValue, valueChanged ? 'render will be called' : 'render will be skipped')
+        if (newValue == "null") {
+          throw `something is wrong settign ${name} to the string 'null'`
+        }
+        console.log(`${this.constructor.name}: %s changed from %s[%s] to %s[%s] (%s)`,name,oldValue,TypeOf.asString(oldValue),newValue,TypeOf.asString(newValue), valueChanged ? 'render will be called' : 'render will be skipped')
         console.log(`${this.constructor.name}: Using %o to set %s`,klass, attributeName)
       }
       if (newValue) {

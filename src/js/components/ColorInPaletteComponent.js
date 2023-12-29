@@ -6,11 +6,11 @@ import HasAttributes           from "../brutaldom/HasAttributes"
 import HasEvents               from "../brutaldom/HasEvents"
 import IsCreatable             from "../brutaldom/IsCreatable"
 import Button                  from "./Button"
+import HideableElement         from "./HideableElement"
 import ColorNameInputComponent from "./ColorNameInputComponent"
 import RichString              from "../brutaldom/RichString"
 
 class ColorInPaletteComponent extends HTMLElement {
-  static DEBUG_EVENTS = true
   static attributeListeners = {
     "hex-code": {
       klass: Color,
@@ -69,6 +69,9 @@ class ColorInPaletteComponent extends HTMLElement {
     this.$nameInput.onEdited( (event) => this.dispatchNameChanged(event.detail) )
     this.$nameInput.onCleared( (event) => this.removeAttribute("user-color-name") )
     this.$nameInput.onCleared( (event) => this.dispatchNameChanged(null) )
+
+    this.$linkMessage = HideableElement.wrap(locator.$e("[data-link-message]"))
+    this.$linkMessageAlgorithm = locator.$e("[data-link-message-algorithm]")
   }
 
   disconnectedCallback() {
@@ -93,9 +96,15 @@ class ColorInPaletteComponent extends HTMLElement {
     this.removeAttribute("user-color-name")
   }
 
-  deriveColorFrom(colorDerivationId,algorithm) {
+  deriveColorFrom(colorDerivationId,algorithm,userSuppliedName) {
     this.setAttribute("color-derived-from-id",colorDerivationId)
     this.setAttribute("color-derived-by-algorithm",algorithm)
+    if (userSuppliedName) {
+      this.setAttribute("user-color-name",userSuppliedName)
+    }
+    else {
+      this.removeAttribute("user-color-name")
+    }
   }
 
   ensureColorDerivationId() {
@@ -148,6 +157,8 @@ class ColorInPaletteComponent extends HTMLElement {
     }
     if (this.colorDerivedFromId && this.colorDerivedByAlgorithm) {
       const otherComponentInPalette = document.querySelector(`[color-derivation-id='${this.colorDerivedFromId}']`)
+      this.$linkMessage.show()
+      this.$linkMessageAlgorithm.textContent = RichString.fromString(this.colorDerivedByAlgorithm).humanize()
       if (otherComponentInPalette) {
         const updateColorFromDerived = () => {
           const algorithm = ColorWheel.algorithm(this.colorDerivedByAlgorithm)
@@ -161,6 +172,10 @@ class ColorInPaletteComponent extends HTMLElement {
       else {
         console.warn("%o has a color-derived-from-id of a non-existent g-color-in-palette: %s",self,this.colorDerivedFromId)
       }
+    }
+    else {
+      this.$linkMessageAlgorithm.textContent = ""
+      this.$linkMessage.hide()
     }
   }
 

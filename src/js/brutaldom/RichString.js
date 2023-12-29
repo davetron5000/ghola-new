@@ -25,16 +25,16 @@ export default class RichString {
 
   camelize() {
     // Taken from camelize npm module
-    return this.string.replace(/[_.-](\w|$)/g, function (_, x) {
+    return RichString.fromString(this.string.replace(/[_.-](\w|$)/g, function (_, x) {
       return x.toUpperCase()
-    })
+    }))
   }
 
   humanize() {
-    return this.decamlize().capitalize()
+    return this.decamlize({spacer: " "}).capitalize()
   }
 
-  decamlize() {
+  decamlize({spacer="_"} = {}) {
     // Taken from decamelize NPM module
 
     // Checking the second character is done later on. Therefore process shorter strings here.
@@ -42,7 +42,7 @@ export default class RichString {
       return new RichString(this.string.toLowerCase())
     }
 
-    const replacement = `$1_$2`
+    const replacement = `$1${spacer}$2`
 
     // Split lowercase sequences followed by uppercase character.
     // `dataForUSACounties` → `data_For_USACounties`

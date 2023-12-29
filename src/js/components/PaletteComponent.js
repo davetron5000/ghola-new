@@ -9,7 +9,6 @@ import Button                  from "./Button"
 import RichString              from "../brutaldom/RichString"
 
 class PaletteComponent extends HTMLElement {
-  static DEBUG_EVENTS=true
   static attributeListeners = {
     "primary-hex-code": {
       klass: Color,
@@ -103,12 +102,15 @@ class PaletteComponent extends HTMLElement {
   }
 
 
-  _addColor({color,deriveFrom,algorithm}) {
+  _addColor({color,deriveFrom,algorithm,userSuppliedName}) {
     if (!this.$element) {
       return
     }
     if (color && deriveFrom) {
       throw `You cannot use both color and deriveFrom in _addColor`
+    }
+    if (color && userSuppliedName) {
+      throw `userSuppliedName is ignored if you are using color in _addColor`
     }
     if (deriveFrom && !algorithm) {
       throw `If you use deriveFrom, you must specify algorithm in _addColor`
@@ -126,7 +128,7 @@ class PaletteComponent extends HTMLElement {
 
     if (deriveFrom) {
       const colorDerivationId = deriveFrom.ensureColorDerivationId()
-      newColorInPalette.deriveColorFrom(colorDerivationId,algorithm)
+      newColorInPalette.deriveColorFrom(colorDerivationId,algorithm,userSuppliedName)
       this._getIndex(newColorInPalette, (index) => {
         this.palette.linkToPrimary(index,algorithm)
       })
@@ -195,13 +197,16 @@ class PaletteComponent extends HTMLElement {
     })
     this.palette.otherColors.forEach( (color) => {
       if (color) {
-        console.log("%s,%s,%o",color, typeof color, color)
         if (color instanceof Color) {
           this._addColor({color})
         }
         else {
           if (primaryColorInPalette) {
-            this._addColor({ deriveFrom: primaryColorInPalette, algorithm: color }) 
+            this._addColor({
+              deriveFrom: primaryColorInPalette,
+              algorithm: color.algorithm,
+              userSuppliedName: color.userSuppliedName
+            }) 
           }
           else {
             console.warn("Asked to link via %s but we have no primary color",color.constructor.name)

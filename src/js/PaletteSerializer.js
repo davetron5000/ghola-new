@@ -1,4 +1,5 @@
 import Color from "./dataTypes/Color"
+import DerivedColor from "./dataTypes/DerivedColor"
 import ColorWheel from "./dataTypes/ColorWheel"
 import RichString from "./brutaldom/RichString"
 
@@ -33,9 +34,13 @@ class HexCodeAndName {
     }
     return color
   }
+
   asColorOrAlgorithm() {
     try {
-      return ColorWheel.algorithm(this.hexCode).toString()
+      return new DerivedColor({
+        algorithm: ColorWheel.algorithm(this.hexCode).toString(),
+        userSuppliedName: this.name ? RichString.fromString(this.name) : null,
+      })
     }
     catch (e) {
       const color = this.asColor()
@@ -52,12 +57,14 @@ class PaletteState {
 
   static fromState(state) {
     let primaryColor
+
     if (state.primaryColor) {
       primaryColor = Color.fromString(state.primaryColor.hexCode)
       if (primaryColor) {
         primaryColor.userSuppliedName = state.primaryColor.userSuppliedName
       }
     }
+
     const otherColors = (state.otherColors || []).map( (otherColorFromState) => {
       if (otherColorFromState) {
         if (otherColorFromState.hexCode) {
@@ -66,7 +73,10 @@ class PaletteState {
           return otherColor
         }
         else {
-          return otherColorFromState.algorithm
+          return new DerivedColor({
+            algorithm: otherColorFromState.algorithm,
+            userSuppliedName: otherColorFromState.userSuppliedName
+          })
         }
       }
       else {
@@ -84,31 +94,28 @@ class PaletteState {
     this.primaryColor = primaryColor
     this.otherColors = otherColors
 
-    this.state = {}
-    this.searchParams = []
+  }
+
+  asState() {
+    const state = {}
 
     if (this.primaryColor) {
-      this.state.primaryColor = {
+      state.primaryColor = {
         hexCode: this.primaryColor.hexCode,
       }
       if (this.primaryColor.userSuppliedName) {
-        this.state.primaryColor.userSuppliedName = this.primaryColor.userSuppliedName.toString()
+        state.primaryColor.userSuppliedName = this.primaryColor.userSuppliedName.toString()
       }
-      this.searchParams.push(
-        [
-          "primaryColor",
-          this._colorToParam(this.primaryColor)
-        ]
-      )
     }
-    this.state.otherColors = this.otherColors.map( (color) => {
+
+    state.otherColors = this.otherColors.map( (color) => {
       if (color) {
         const colorState = {}
         if (color instanceof Color) {
           colorState.hexCode = color.hexCode
         }
         else {
-          colorState.algorithm = color
+          colorState.algorithm = color.algorithm
         }
         if (color.userSuppliedName) {
           colorState.userSuppliedName = color.userSuppliedName.toString()
@@ -119,20 +126,28 @@ class PaletteState {
         return {}
       }
     })
-    this.searchParams.push(
-      [
-        "otherColors",
-        this.otherColors.map( (color) => this._colorToParam(color) ).join(",")
-      ]
-    )
+    return state
   }
 
-  asSearchParams() { return this.searchParams }
-  asState() { return this.state }
+  asSearchParams() {
+    const searchParams = []
+
+    if (this.primaryColor) {
+      searchParams.push( [
+        "primaryColor",
+        this._colorToParam(this.primaryColor)
+      ])
+    }
+    searchParams.push([
+      "otherColors",
+      this.otherColors.map( (color) => this._colorToParam(color) ).join(",")
+    ])
+    return searchParams
+  }
 
   _colorToParam(color) {
     if (color) {
-      const string = color instanceof Color ? color.hexCode : color.toString() // algorithm
+      const string = color instanceof Color ? color.hexCode : color.algorithm.toString()
       if (color.userSuppliedName) {
         return `${string}:${color.userSuppliedName}`
       }
@@ -155,6 +170,7 @@ export default class PaletteSerializer {
     this.window = window
 
     this.window.addEventListener("popstate", (event) => {
+      console.log("POPSTATE…ALL RIGHT! %o",event)
       if (event.state) {
         this.replace(PaletteState.fromState(event.state))
       }
@@ -168,14 +184,16 @@ export default class PaletteSerializer {
     const state = new PaletteState(this.palette.primaryColor,this.palette.otherColors)
 
     const url = new URL(this.window.location);
+    const urlNow = url.toString()
 
     state.asSearchParams().forEach( ([key,value]) => url.searchParams.set(key, value) )
-
-    history.pushState(
-      {},//state.asState(),
-      "",
-      url.toString()
-    )
+    if (urlNow != url.toString()) {
+      history.pushState(
+        state.asState(),
+        "",
+        url.toString()
+      )
+    }
   }
 
   load() {

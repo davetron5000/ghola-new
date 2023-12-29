@@ -1,9 +1,9 @@
 import Color from "../dataTypes/Color"
+import DerivedColor from "../dataTypes/DerivedColor"
 import HasEvents from "../brutaldom/HasEvents"
 import TypeOf from "../brutaldom/TypeOf"
 
 class Palette extends EventTarget {
-  static DEBUG_EVENTS=true
   static events = {
     changed: {},
     replaced: {},
@@ -47,7 +47,11 @@ class Palette extends EventTarget {
   }
 
   linkToPrimary(index,algorithm) {
-    this.colors[index] = algorithm.toString()
+    this.colors[index] = new DerivedColor({
+      algorithm: algorithm.toString(),
+      userSuppliedName: this.colors[index] ? this.colors[index].userSuppliedName : null
+    })
+
     this.dispatchChanged()
   }
 

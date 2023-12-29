@@ -6,7 +6,6 @@ import HasEvents from "../brutaldom/HasEvents"
 import IsCreatable from "../brutaldom/IsCreatable"
 
 class EditableColorSwatchComponent extends HTMLElement {
-  static DEBUG_EVENTS = true
   static attributeListeners = {
     "hex-code": {
       attributeName: "color",

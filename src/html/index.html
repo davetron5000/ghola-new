@@ -43,14 +43,28 @@
       <div class="flex items-center justify-center gap-2">
       </div>
     </template>
+    <template id="g-color-name-input">
+      <label class="w-15">
+        <input type="text"
+               name="colorName" 
+               class="w-100 inner-shadow-1 f-2 fw-5 pa-2 ba bg-white mb-2 br-1"
+               data-css-when-edited="bc-orange bg-orange-lightest"
+               data-css-when-derived="bc-gray-dark bg-white"
+               >
+        <div class="f-1 i gray-dark">
+          Color Name
+          <span data-when-derived class="gray">
+            (derived)
+          </span>
+          <span data-when-edited class="gray">
+            (yours)
+          </span>
+        </div>
+      </label>
+    </template>
     <template id="g-color-in-palette">
       <div class="flex items-start justify-center gap-2">
-        <label class="w-15">
-          <input type="text" name="colorName" class="w-100 inner-shadow-1 f-2 fw-5 pa-2 ba bc-gray-dark bg-white mb-2 br-1">
-          <div class="f-1 i gray-dark">
-            Color Name
-          </div>
-        </label>
+        <g-color-name-input></g-color-name-input>
         <g-color-scale></g-color-scale>
         <nav class="flex flex-column pv-1 mh-2 w-15">
           <%- include("templates/small-button.html", {

@@ -61,5 +61,13 @@ export default class RichString {
   }
 
   toString() { return this.string }
+  toStringOrNull() {
+    if (this.string.trim() == "") {
+      return null
+    }
+    else {
+      return this.string
+    }
+  }
 
 }

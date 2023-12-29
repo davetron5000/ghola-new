@@ -9,7 +9,10 @@ import EditableColorSwatchComponent from "./EditableColorSwatchComponent"
 
 class ColorScaleComponent extends HTMLElement {
   static attributeListeners = {
-    "hex-code": { klass: Color },
+    "hex-code": {
+      klass: Color,
+      attributeName: "baseColor",
+    },
     "compact": {
       klass: Boolean,
     },
@@ -23,14 +26,14 @@ class ColorScaleComponent extends HTMLElement {
     this.numSteps = 7 
   }
 
-  set hexCode(hexCode) {
-    this.colorScale = new ColorScale({ numSteps: this.numSteps, baseColor: hexCode})
-    this.name = new ColorName(hexCode).toString()
+  set baseColor(color) {
+    this.colorScale = new ColorScale({ numSteps: this.numSteps, baseColor: color})
+    this.name = color.name
   }
 
-  updateBaseColor(hexCode) {
-    this.setAttribute("hex-code", hexCode.toString())
-    this.dispatchBaseColorChange(hexCode)
+  updateBaseColor(color) {
+    this.setAttribute("hex-code", color)
+    this.dispatchBaseColorChange(color)
   }
 
   makeNormalSize() { this.setAttribute("compact", false) }

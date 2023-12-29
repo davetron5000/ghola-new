@@ -5,12 +5,14 @@ import HasAttributes from "../brutaldom/HasAttributes"
 import HasEvents from "../brutaldom/HasEvents"
 import IsCreatable from "../brutaldom/IsCreatable"
 import Button from "./Button"
+import ColorNameInputComponent from "./ColorNameInputComponent"
 import RichString from "../brutaldom/RichString"
 
 class ColorInPaletteComponent extends HTMLElement {
   static attributeListeners = {
     "hex-code": {
       klass: Color,
+      attributeName: "color",
     },
     "primary": {
       klass: Boolean,
@@ -18,7 +20,8 @@ class ColorInPaletteComponent extends HTMLElement {
     "compact": {
       klass: Boolean,
     },
-    "color-name": {
+    "user-color-name": {
+      klass: RichString,
     }
   }
 
@@ -26,6 +29,7 @@ class ColorInPaletteComponent extends HTMLElement {
     removed: {},
     changed: {},
     colorsAdded: {},
+    nameChanged: {},
   }
 
   afterAppendTemplate({locator}) {
@@ -48,7 +52,11 @@ class ColorInPaletteComponent extends HTMLElement {
     this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
     this.$triadButton.onClick( () => this.dispatchColorsAdded("triad") )
 
-    this.$nameInput = locator.$e("input[name=colorName]")
+    this.$nameInput = locator.$e("g-color-name-input")
+    this.$nameInput.onEdited( (event) => this.setAttribute("user-color-name",event.detail) )
+    this.$nameInput.onEdited( (event) => this.dispatchNameChanged(event.detail) )
+    this.$nameInput.onCleared( (event) => this.removeAttribute("user-color-name") )
+    this.$nameInput.onCleared( (event) => this.dispatchNameChanged(null) )
   }
 
   disconnectedCallback() {
@@ -56,26 +64,36 @@ class ColorInPaletteComponent extends HTMLElement {
     this.$removeButton.disconnectedCallback()
   }
 
-  updateHexCode(hexCode) {
-    this.setAttribute("hex-code",hexCode.toString())
+  updateColor(color) {
+    this.setAttribute("hex-code",color)
+    if (color.userSuppliedName) {
+      this.setAttribute("user-color-name",color.userSuppliedName)
+    }
+    else {
+      this.removeAttribute("user-color-name")
+    }
+  }
+  clearColor() {
+    this.removeAttribute("hex-code")
+    this.removeAttribute("user-color-name")
   }
 
   render() {
     if (!this.$element) {
       return
     }
-    if (this.hexCode) {
-      this.$colorScale.updateBaseColor(this.hexCode)
+    if (this.color) {
+      this.$colorScale.updateBaseColor(this.color)
     }
-    if (this.colorName) {
-      this.$nameInput.value = this.colorName
+    if (this.userColorName) {
+      this.$nameInput.setEditedValue(this.userColorName)
     }
     else {
-      if (this.hexCode) {
-        this.$nameInput.value = new RichString(new ColorName(this.hexCode).category.broad).humanize()
+      if (this.color) {
+        this.$nameInput.setDerivedValue(this.color.category.humanize())
       }
       else {
-        this.$nameInput.value = ""
+        this.$nameInput.setDerivedValue("")
       }
     }
     if (this.primary) {

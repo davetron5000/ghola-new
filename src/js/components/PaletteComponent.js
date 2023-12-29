@@ -5,12 +5,17 @@ import Palette                 from "../dataTypes/Palette"
 import ColorInPaletteComponent from "./ColorInPaletteComponent"
 import PaletteSerializer       from "../PaletteSerializer"
 import Button                  from "./Button"
+import RichString              from "../brutaldom/RichString"
 
 class PaletteComponent extends HTMLElement {
   static attributeListeners = {
     "primary-hex-code": {
       klass: Color,
-    }
+      attributeName: "primaryColor",
+    },
+    "primary-color-name": {
+      value: RichString,
+    },
   }
 
   constructor() {
@@ -36,7 +41,7 @@ class PaletteComponent extends HTMLElement {
     if (!this.$element) {
       return
     }
-    if (this.primaryHexCode) {
+    if (this.primaryColor) {
       this._ensurePrimaryColorInPalette()
     }
     else {
@@ -57,11 +62,11 @@ class PaletteComponent extends HTMLElement {
       primaryColorInPalette.onColorsAdded( (event) => {
         const method = event.detail
         const newColors = [
-          primaryColorInPalette.hexCode[method]()
+          primaryColorInPalette.color[method]()
         ].flat()
 
-        const newColorsInPalette = newColors.map( (hexCode) => {
-          return this._addColor(hexCode)
+        const newColorsInPalette = newColors.map( (color) => {
+          return this._addColor(color)
         })
       })
       primaryColorInPalette.onChanged( (event) => {
@@ -69,9 +74,12 @@ class PaletteComponent extends HTMLElement {
         this.setAttribute("primary-hex-code",primaryColor ? primaryColor.toString() : "")
         this.palette.primaryColor = primaryColor
       })
+      primaryColorInPalette.onNameChanged( (event) => {
+        this.palette.renamePrimaryColor(event.detail)
+      })
     }
 
-    primaryColorInPalette.updateHexCode(this.primaryHexCode)
+    primaryColorInPalette.updateColor(this.primaryColor)
   }
    
   _removePrimaryColorInPalette() {
@@ -82,15 +90,12 @@ class PaletteComponent extends HTMLElement {
   }
 
 
-  _addColor(hexCode) {
+  _addColor(color) {
     if (!this.$element) {
       return
     }
 
-    const newColorHexCode = hexCode
-
     const attributes = {
-      "hex-code": newColorHexCode,
       "compact": false,
     }
 
@@ -99,6 +104,7 @@ class PaletteComponent extends HTMLElement {
       attributes,
     )
 
+    newColorInPalette.updateColor(color)
     newColorInPalette.scrollIntoView()
 
     this._addIndexes()
@@ -120,13 +126,19 @@ class PaletteComponent extends HTMLElement {
     newColorInPalette.onColorsAdded( (event) => {
       const method = event.detail
       const newColors = [
-        newColorInPalette.hexCode[method]()
+        newColorInPalette.color[method]()
       ].flat()
-      newColors.forEach( (hexCode) => this._addColor(hexCode) )
+      newColors.forEach( (color) => this._addColor(color) )
+    })
+
+    newColorInPalette.onNameChanged( (event) => {
+      this._getIndex(newColorInPalette, (index) => {
+        this.palette.renameColor(index,event.detail)
+      })
     })
 
     this._getIndex(newColorInPalette, (index) => {
-      this.palette.changeColor(index,newColorHexCode)
+      this.palette.changeColor(index,color)
     })
 
     return newColorInPalette
@@ -146,18 +158,23 @@ class PaletteComponent extends HTMLElement {
   }
 
   _replacePalette() {
-
-    if (this.palette.primaryColor) {
-      this.setAttribute("primary-hex-code",this.palette.primaryColor.toString())
-    }
     document.querySelectorAll(ColorInPaletteComponent.tagName).forEach( (element) => {
-      if (element.getAttribute("primary") !== "true") {
+      if (element.getAttribute("primary") === "true") {
+        if (this.palette.primaryColor) {
+          this.setAttribute("primary-hex-code",this.palette.primaryColor)
+          element.updateColor(this.palette.primaryColor)
+        }
+        else {
+          element.updateColor(this.primaryColor)
+        }
+      }
+      else {
         element.parentElement.removeChild(element) 
       }
     })
-    this.palette.otherColors.forEach( (hexCode) => {
-      if (hexCode) {
-        this._addColor(hexCode)
+    this.palette.otherColors.forEach( (color) => {
+      if (color) {
+        this._addColor(color)
       }
     })
   }

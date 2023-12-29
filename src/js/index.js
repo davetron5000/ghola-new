@@ -6,6 +6,7 @@ import ColorScaleComponent           from "./components/ColorScaleComponent"
 import ButtonAccentEnhancement       from "./components/enhancements/ButtonAccentEnhancement"
 import ColorInPaletteComponent       from "./components/ColorInPaletteComponent"
 import PaletteComponent              from "./components/PaletteComponent"
+import ColorNameInputComponent       from "./components/ColorNameInputComponent"
 
 document.addEventListener("DOMContentLoaded", () => {
   HexCodeComponent.define()
@@ -15,5 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
   ColorScaleComponent.define()
   ButtonAccentEnhancement.define()
   ColorInPaletteComponent.define()
+  ColorNameInputComponent.define()
   PaletteComponent.define()
 })

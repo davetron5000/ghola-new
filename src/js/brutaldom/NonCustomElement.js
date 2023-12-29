@@ -1,3 +1,5 @@
+import Locator from "./Locator"
+
 export default class NonCustomElement extends EventTarget {
   static wrap(element) {
     const wrappingElement = new this(element)
@@ -19,5 +21,6 @@ export default class NonCustomElement extends EventTarget {
       throw `You may only construct a ${this.constructor.name} from an Element or its descendants`
     }
     this.element = element
+    this.locator = new Locator(this.element)
   }
 }

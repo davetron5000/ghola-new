@@ -1,5 +1,6 @@
 import chroma from "chroma-js"
 import ColorName from "./ColorName"
+import RichString from "../brutaldom/RichString"
 
 export default class Color {
   static REGEXP = new RegExp("^(#)?([a-fA-F0-9]{6})$")
@@ -44,9 +45,32 @@ export default class Color {
     if (!matches) {
       throw `'${hexCodeAsString}' is not a valid hex code`
     }
-    this.hexCode = `#${hexCode}`.toUpperCase()
-    this.objectId = Color.nextId()
-    this.name     = new ColorName(this)
+    this.hexCode           = `#${hexCode}`.toUpperCase()
+    this.objectId          = Color.nextId()
+    this.name              = new ColorName(this)
+    this._category         = RichString.fromString(this.name.category.broad)
+    this._userSuppliedName = null
+  }
+
+  set category(value) {
+    throw `You may not change the category`
+  }
+
+  set userSuppliedName(value) {
+    this._userSuppliedName = RichString.fromString(value)
+  }
+
+  get userSuppliedName() {
+    return this._userSuppliedName
+  }
+
+  get category() {
+    if (this._userSuppliedName) {
+      return this._userSuppliedName
+    }
+    else {
+      return this._category
+    }
   }
 
   toString() { return this.hexCode }

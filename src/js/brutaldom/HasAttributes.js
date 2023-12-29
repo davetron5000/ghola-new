@@ -13,12 +13,17 @@ const hasAttributesMixin = {
         console.log(`${this.constructor.name}: %s changed from %s to %s`,name,oldValue,newValue)
         console.log(`${this.constructor.name}: Using %o to set %s`,klass, attributeName)
       }
-      if (klass) {
-        if (klass === Boolean) {
-          this[attributeName] = newValue === "true"
+      if (newValue) {
+        if (klass) {
+          if (klass === Boolean) {
+            this[attributeName] = newValue === "true"
+          }
+          else {
+            this[attributeName] = new klass(newValue)
+          }
         }
         else {
-          this[attributeName] = new klass(newValue)
+          this[attributeName] = newValue
         }
       }
       else {

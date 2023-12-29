@@ -19,6 +19,9 @@ export default class RichString {
   capitalize() {
     return new RichString(this.string.charAt(0).toUpperCase() + this.string.slice(1))
   }
+  decapitalize() {
+    return new RichString(this.string.charAt(0).toLowerCase() + this.string.slice(1))
+  }
 
   camelize() {
     // Taken from camelize npm module

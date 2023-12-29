@@ -65,7 +65,7 @@
     <template id="g-color-in-palette">
       <div class="flex items-start justify-center gap-2">
         <g-color-name-input></g-color-name-input>
-        <g-color-scale></g-color-scale>
+        <g-color-scale editable="true"></g-color-scale>
         <nav class="flex flex-column pv-1 mh-2 w-15">
           <%- include("templates/small-button.html", {
                 additionalButtonClass: "mb-1 br-bottom-0",
@@ -158,13 +158,21 @@
         <span class="h-3 w-3 bg-gray"></span>
       </h1>
       <h2 class="ma-0 mh-3 pb-3 f-5">Palette Generator for Developers</h2>
-      <nav class="bg-gray-lighter bb bc-gray-dark black pa-3 flex items-baseline gap-3">
-        <h3 class="f-2 fw-7 ma-0">Download this palette</h3>
-        <a href="#" class="black">Foo</a>
-        <a href="#" class="black">Foo</a>
-        <a href="#" class="black">Foo</a>
-        <a href="#" class="black">Foo</a>
-      </nav>
+      <div class="bg-white bb bc-gray-dark black flex items-baseline">
+        <label for="compact" class="bg-gray-lightest flex items-center gap-1 pa-3 inner-shadow-1 br bl bc-gray pointer hover-bg-white">
+          <input type="checkbox" name="compact" id="compact">
+          <span>
+            Compact
+          </span>
+        </label>
+        <nav class="bg-gray-lighter flex items-baseline pa-3 gap-3 w-100">
+          <h3 class="f-2 fw-7 ma-0">Download this palette</h3>
+          <a href="#" class="black">Foo</a>
+          <a href="#" class="black">Foo</a>
+          <a href="#" class="black">Foo</a>
+          <a href="#" class="black">Foo</a>
+        </nav>
+      </div>
     </header>
     <main class="pa-3">
       <g-palette primary-hex-code="#452176"></g-palette>

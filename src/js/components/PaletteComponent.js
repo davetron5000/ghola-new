@@ -1,6 +1,7 @@
 import HasTemplate             from "../brutaldom/HasTemplate"
 import HasAttributes           from "../brutaldom/HasAttributes"
 import Color                   from "../dataTypes/Color"
+import ColorWheel              from "../dataTypes/ColorWheel"
 import Palette                 from "../dataTypes/Palette"
 import ColorInPaletteComponent from "./ColorInPaletteComponent"
 import PaletteSerializer       from "../PaletteSerializer"
@@ -8,19 +9,24 @@ import Button                  from "./Button"
 import RichString              from "../brutaldom/RichString"
 
 class PaletteComponent extends HTMLElement {
+  static DEBUG_EVENTS=true
   static attributeListeners = {
     "primary-hex-code": {
       klass: Color,
       attributeName: "primaryColor",
     },
     "primary-color-name": {
-      value: RichString,
+      klass: RichString,
     },
+    "compact": {
+      klass: Boolean
+    }
   }
 
   constructor() {
     super()
     this.palette    = new Palette()
+    window.blah = this.palette
     this.serializer = new PaletteSerializer(this.palette, window)
 
     this.palette.onReplaced( () => this._replacePalette() )
@@ -29,12 +35,18 @@ class PaletteComponent extends HTMLElement {
   afterAppendTemplate({locator}) {
     this.$addRandomColorButton = Button.wrap(locator.$e("[data-add-random-color]"))
     this.$colorSection = locator.$e("section")
-    this.$addRandomColorButton.onClick( () => this._addColor(this.palette.newColor()) )
+    this.$addRandomColorButton.onClick( () => this._addColor({ color: this.palette.newColor() }) )
   }
 
   afterRenderTemplate() {
     this.serializer.load()
     this.palette.onChanged( () => this.serializer.save(), { debounce: 100 } )
+    this.$compactCheckbox = document.querySelector("input[type=checkbox][name='compact']")
+    if (this.$compactCheckbox) {
+      this.$compactCheckbox.addEventListener("change", (event) => {
+        this.setAttribute("compact",event.target.checked)
+      })
+    }
   }
 
   render() { 
@@ -47,6 +59,14 @@ class PaletteComponent extends HTMLElement {
     else {
       this._removePrimaryColorInPalette()
     }
+    this.$element.querySelectorAll(ColorInPaletteComponent.tagName).forEach( (element) => {
+      if (this.compact) {
+        element.makeCompact()
+      }
+      else {
+        element.makeNormalSize()
+      }
+    })
   }
 
   _ensurePrimaryColorInPalette() {
@@ -56,20 +76,13 @@ class PaletteComponent extends HTMLElement {
         this.$colorSection,
         {
           primary: true,
-          compact: false,
+          compact: this.compact,
         }
       )
-      primaryColorInPalette.onColorsAdded( (event) => {
-        const method = event.detail
-        const newColors = [
-          primaryColorInPalette.color[method]()
-        ].flat()
 
-        const newColorsInPalette = newColors.map( (color) => {
-          return this._addColor(color)
-        })
-      })
-      primaryColorInPalette.onChanged( (event) => {
+      this._handleColorLinking(primaryColorInPalette)
+
+      primaryColorInPalette.onBaseColorChanged( (event) => {
         const primaryColor = event.detail
         this.setAttribute("primary-hex-code",primaryColor ? primaryColor.toString() : "")
         this.palette.primaryColor = primaryColor
@@ -90,26 +103,43 @@ class PaletteComponent extends HTMLElement {
   }
 
 
-  _addColor(color) {
+  _addColor({color,deriveFrom,algorithm}) {
     if (!this.$element) {
       return
     }
-
-    const attributes = {
-      "compact": false,
+    if (color && deriveFrom) {
+      throw `You cannot use both color and deriveFrom in _addColor`
+    }
+    if (deriveFrom && !algorithm) {
+      throw `If you use deriveFrom, you must specify algorithm in _addColor`
     }
 
     const newColorInPalette = ColorInPaletteComponent.appendNewChild(
       this.$colorSection,
-      attributes,
+      {
+        compact: this.compact,
+      }
     )
 
-    newColorInPalette.updateColor(color)
-    newColorInPalette.scrollIntoView()
-
     this._addIndexes()
+    this._handleColorLinking(newColorInPalette)
 
-    newColorInPalette.onChanged( (event) => {
+    if (deriveFrom) {
+      const colorDerivationId = deriveFrom.ensureColorDerivationId()
+      newColorInPalette.deriveColorFrom(colorDerivationId,algorithm)
+      this._getIndex(newColorInPalette, (index) => {
+        this.palette.linkToPrimary(index,algorithm)
+      })
+    }
+    else {
+      newColorInPalette.updateColor(color)
+      this._getIndex(newColorInPalette, (index) => {
+        this.palette.changeColor(index,color)
+      })
+    }
+
+
+    newColorInPalette.onBaseColorChanged( (event) => {
       this._getIndex(newColorInPalette, (index) => {
         this.palette.changeColor(index,event.detail)
       })
@@ -123,13 +153,6 @@ class PaletteComponent extends HTMLElement {
       this._addIndexes()
     })
 
-    newColorInPalette.onColorsAdded( (event) => {
-      const method = event.detail
-      const newColors = [
-        newColorInPalette.color[method]()
-      ].flat()
-      newColors.forEach( (color) => this._addColor(color) )
-    })
 
     newColorInPalette.onNameChanged( (event) => {
       this._getIndex(newColorInPalette, (index) => {
@@ -137,11 +160,7 @@ class PaletteComponent extends HTMLElement {
       })
     })
 
-    this._getIndex(newColorInPalette, (index) => {
-      this.palette.changeColor(index,color)
-    })
-
-    return newColorInPalette
+    newColorInPalette.scrollIntoView()
   }
 
   _getIndex(element,ifIndexExists) {
@@ -158,6 +177,7 @@ class PaletteComponent extends HTMLElement {
   }
 
   _replacePalette() {
+    let primaryColorInPalette = null
     document.querySelectorAll(ColorInPaletteComponent.tagName).forEach( (element) => {
       if (element.getAttribute("primary") === "true") {
         if (this.palette.primaryColor) {
@@ -167,6 +187,7 @@ class PaletteComponent extends HTMLElement {
         else {
           element.updateColor(this.primaryColor)
         }
+        primaryColorInPalette = element
       }
       else {
         element.parentElement.removeChild(element) 
@@ -174,10 +195,30 @@ class PaletteComponent extends HTMLElement {
     })
     this.palette.otherColors.forEach( (color) => {
       if (color) {
-        this._addColor(color)
+        console.log("%s,%s,%o",color, typeof color, color)
+        if (color instanceof Color) {
+          this._addColor({color})
+        }
+        else {
+          if (primaryColorInPalette) {
+            this._addColor({ deriveFrom: primaryColorInPalette, algorithm: color }) 
+          }
+          else {
+            console.warn("Asked to link via %s but we have no primary color",color.constructor.name)
+          }
+        }
       }
     })
   }
+
+  _handleColorLinking(colorInPalette) {
+    colorInPalette.onDerivedColorsAdded( (event) => {
+      event.detail.forEach( (algorithm) => {
+        this._addColor({ deriveFrom: colorInPalette, algorithm: algorithm }) 
+      })
+    })
+  }
+
   
   static tagName = "g-palette"
 

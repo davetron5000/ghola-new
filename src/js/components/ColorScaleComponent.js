@@ -16,6 +16,9 @@ class ColorScaleComponent extends HTMLElement {
     "compact": {
       klass: Boolean,
     },
+    "editable": {
+      klass: Boolean,
+    }
   }
   static events = {
     baseColorChange: {}
@@ -38,6 +41,7 @@ class ColorScaleComponent extends HTMLElement {
 
   makeNormalSize() { this.setAttribute("compact", false) }
   makeCompact() { this.setAttribute("compact", true) }
+  preventEditing() { this.setAttribute("editable", false) }
 
   render() {
     if (!this.$element) {
@@ -67,7 +71,7 @@ class ColorScaleComponent extends HTMLElement {
       const $editableColorSwatch = EditableColorSwatchComponent.appendNewChild(
         this.$element,
         {
-          editable: index == middle,
+          editable: this.editable && index == middle,
         }
       )
       if (index == middle) {

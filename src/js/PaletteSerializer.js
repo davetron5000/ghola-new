@@ -1,10 +1,12 @@
 import Color from "./dataTypes/Color"
+import ColorWheel from "./dataTypes/ColorWheel"
 import RichString from "./brutaldom/RichString"
 
 class HexCodeAndName {
 
   static NULL_VALUE = {
-    asColor: () => null
+    asColor: () => null,
+    asColorOrAlgorithm: () => null,
   }
 
   static fromString(string) {
@@ -31,6 +33,19 @@ class HexCodeAndName {
     }
     return color
   }
+  asColorOrAlgorithm() {
+    try {
+      return ColorWheel.algorithm(this.hexCode).toString()
+    }
+    catch (e) {
+      const color = this.asColor()
+      if (!color) {
+        console.warn("'%s' is not a hexcode, nor algorithm: %o",this.hexcode,e)
+        return null
+      }
+      return color
+    }
+  }
 }
 
 class PaletteState {
@@ -44,10 +59,15 @@ class PaletteState {
       }
     }
     const otherColors = (state.otherColors || []).map( (otherColorFromState) => {
-      if (otherColorFromState && otherColorFromState.hexCode) {
-        const otherColor = Color.fromString(otherColorFromState.hexCode)
-        otherColor.userSuppliedName = otherColorFromState.userSuppliedName
-        return otherColor
+      if (otherColorFromState) {
+        if (otherColorFromState.hexCode) {
+          const otherColor = Color.fromString(otherColorFromState.hexCode)
+          otherColor.userSuppliedName = otherColorFromState.userSuppliedName
+          return otherColor
+        }
+        else {
+          return otherColorFromState.algorithm
+        }
       }
       else {
         return null
@@ -83,8 +103,12 @@ class PaletteState {
     }
     this.state.otherColors = this.otherColors.map( (color) => {
       if (color) {
-        const colorState = {
-          hexCode: color.hexCode,
+        const colorState = {}
+        if (color instanceof Color) {
+          colorState.hexCode = color.hexCode
+        }
+        else {
+          colorState.algorithm = color
         }
         if (color.userSuppliedName) {
           colorState.userSuppliedName = color.userSuppliedName.toString()
@@ -108,11 +132,12 @@ class PaletteState {
 
   _colorToParam(color) {
     if (color) {
+      const string = color instanceof Color ? color.hexCode : color.toString() // algorithm
       if (color.userSuppliedName) {
-        return `${color.toString()}:${color.userSuppliedName}`
+        return `${string}:${color.userSuppliedName}`
       }
       else {
-        return color.toString()
+        return string
       }
 
     }
@@ -147,7 +172,7 @@ export default class PaletteSerializer {
     state.asSearchParams().forEach( ([key,value]) => url.searchParams.set(key, value) )
 
     history.pushState(
-      state.asState(),
+      {},//state.asState(),
       "",
       url.toString()
     )
@@ -157,7 +182,7 @@ export default class PaletteSerializer {
     const url = new URL(this.window.location);
     const primaryColor = HexCodeAndName.fromString(url.searchParams.get("primaryColor")).asColor()
     const otherColors = (url.searchParams.get("otherColors") || "").split(",").
-      map( (string) => HexCodeAndName.fromString(string).asColor() ).
+      map( (string) => HexCodeAndName.fromString(string).asColorOrAlgorithm() ).
       filter( (possiblyNullColor) => possiblyNullColor )
 
     this.palette.replace(

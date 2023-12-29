@@ -10,7 +10,7 @@ const hasAttributesMixin = {
       const klass = attributeListeners[name].klass
       const debug = attributeListeners[name].debug || this.constructor.DEBUG_ATTRIBUTES
       if (debug) {
-        console.log(`${this.constructor.name}: %s changed from %s to %s`,name,oldValue,newValue)
+        console.log(`${this.constructor.name}: %s changed from %s to %s (%s)`,name,oldValue,newValue, valueChanged ? 'render will be called' : 'render will be skipped')
         console.log(`${this.constructor.name}: Using %o to set %s`,klass, attributeName)
       }
       if (newValue) {

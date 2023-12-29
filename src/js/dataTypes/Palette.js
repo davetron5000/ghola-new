@@ -1,5 +1,6 @@
 import Color from "../dataTypes/Color"
 import HasEvents from "../brutaldom/HasEvents"
+import TypeOf from "../brutaldom/TypeOf"
 
 class Palette extends EventTarget {
   static DEBUG_EVENTS=true
@@ -38,10 +39,15 @@ class Palette extends EventTarget {
 
   changeColor(index,color) {
     const oldColor = this.colors[index]
-    if (oldColor && oldColor.isEqual(color)) {
+    if (oldColor && (oldColor instanceof Color) && oldColor.isEqual(color)) {
       return
     }
     this.colors[index] = color
+    this.dispatchChanged()
+  }
+
+  linkToPrimary(index,algorithm) {
+    this.colors[index] = algorithm.toString()
     this.dispatchChanged()
   }
 

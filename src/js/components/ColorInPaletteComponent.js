@@ -1,14 +1,16 @@
-import Color from "../dataTypes/Color"
-import ColorName from "../dataTypes/ColorName"
-import HasTemplate from "../brutaldom/HasTemplate"
-import HasAttributes from "../brutaldom/HasAttributes"
-import HasEvents from "../brutaldom/HasEvents"
-import IsCreatable from "../brutaldom/IsCreatable"
-import Button from "./Button"
+import Color                   from "../dataTypes/Color"
+import ColorWheel              from "../dataTypes/ColorWheel"
+import ColorName               from "../dataTypes/ColorName"
+import HasTemplate             from "../brutaldom/HasTemplate"
+import HasAttributes           from "../brutaldom/HasAttributes"
+import HasEvents               from "../brutaldom/HasEvents"
+import IsCreatable             from "../brutaldom/IsCreatable"
+import Button                  from "./Button"
 import ColorNameInputComponent from "./ColorNameInputComponent"
-import RichString from "../brutaldom/RichString"
+import RichString              from "../brutaldom/RichString"
 
 class ColorInPaletteComponent extends HTMLElement {
+  static DEBUG_EVENTS = true
   static attributeListeners = {
     "hex-code": {
       klass: Color,
@@ -22,35 +24,45 @@ class ColorInPaletteComponent extends HTMLElement {
     },
     "user-color-name": {
       klass: RichString,
-    }
+    },
+    "color-deriviation-id": {},
+    "color-derived-from-id": {},
+    "color-derived-by-algorithm": {},
   }
 
   static events = {
     removed: {},
-    changed: {},
-    colorsAdded: {},
+    baseColorChanged: {},
+    derivedColorsAdded: {},
     nameChanged: {},
   }
 
-  afterAppendTemplate({locator}) {
-    this.$analogousButton = Button.wrap(locator.$e("button[data-analogous]"))
-    this.$analogousButton.onClick( () => this.dispatchColorsAdded("analogous") )
 
+  afterAppendTemplate({locator}) {
     this.$colorScale = locator.$e("g-color-scale")
-    this.$colorScale.onBaseColorChange( (event) => this.dispatchChanged(event.detail) )
-    this.$colorScale.onBaseColorChange( (event) => this.setAttribute("hex-code",event.detail) )
+    this.$colorScale.onBaseColorChange( (event) => {
+      if (this.colorDerivedFromId) {
+      }
+      else {
+        this.dispatchBaseColorChanged(event.detail)
+        this.setAttribute("hex-code",event.detail) 
+      }
+    })
+
+    this.$analogousButton = Button.wrap(locator.$e("button[data-analogous]"))
+    this.$analogousButton.onClick( () => this.dispatchDerivedColorsAdded(ColorWheel.algorithms.analogous()) )
 
     this.$complementButton = Button.wrap(locator.$e("button[data-complement]"))
-    this.$complementButton.onClick( () => this.dispatchColorsAdded("complement") )
+    this.$complementButton.onClick( () => this.dispatchDerivedColorsAdded(ColorWheel.algorithms.complement()) )
+
+    this.$splitComplementButton = Button.wrap(locator.$e("button[data-split-complement]"))
+    this.$splitComplementButton.onClick( () => this.dispatchDerivedColorsAdded(ColorWheel.algorithms.splitComplement()) )
+
+    this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
+    this.$triadButton.onClick( () => this.dispatchDerivedColorsAdded(ColorWheel.algorithms.triad()) )
 
     this.$removeButton = Button.wrap(locator.$e("button[data-remove]"))
     this.$removeButton.onClick( () => this.dispatchRemoved(event.detail) )
-
-    this.$splitComplementButton = Button.wrap(locator.$e("button[data-split-complement]"))
-    this.$splitComplementButton.onClick( () => this.dispatchColorsAdded("splitComplements") )
-
-    this.$triadButton = Button.wrap(locator.$e("button[data-triad]"))
-    this.$triadButton.onClick( () => this.dispatchColorsAdded("triad") )
 
     this.$nameInput = locator.$e("g-color-name-input")
     this.$nameInput.onEdited( (event) => this.setAttribute("user-color-name",event.detail) )
@@ -73,9 +85,27 @@ class ColorInPaletteComponent extends HTMLElement {
       this.removeAttribute("user-color-name")
     }
   }
+  makeCompact() { this.setAttribute("compact",true) }
+  makeNormalSize() { this.setAttribute("compact",false) }
+
   clearColor() {
     this.removeAttribute("hex-code")
     this.removeAttribute("user-color-name")
+  }
+
+  deriveColorFrom(colorDerivationId,algorithm) {
+    this.setAttribute("color-derived-from-id",colorDerivationId)
+    this.setAttribute("color-derived-by-algorithm",algorithm)
+  }
+
+  ensureColorDerivationId() {
+    let id = this.getAttribute("color-derivation-id")
+    if (!id || id === "") {
+      id = crypto.randomUUID()
+      console.log("Setting colorDerivationId to %s",id)
+      this.setAttribute("color-derivation-id",id)
+    }
+    return id
   }
 
   render() {
@@ -115,6 +145,22 @@ class ColorInPaletteComponent extends HTMLElement {
     }
     else {
       this.$colorScale.makeNormalSize()
+    }
+    if (this.colorDerivedFromId && this.colorDerivedByAlgorithm) {
+      const otherComponentInPalette = document.querySelector(`[color-derivation-id='${this.colorDerivedFromId}']`)
+      if (otherComponentInPalette) {
+        const updateColorFromDerived = () => {
+          const algorithm = ColorWheel.algorithm(this.colorDerivedByAlgorithm)
+          const otherColor = otherComponentInPalette.color
+          this.setAttribute("hex-code",algorithm.deriveFrom(otherColor))
+        }
+        otherComponentInPalette.onBaseColorChanged( (event) => updateColorFromDerived() )
+        this.$colorScale.preventEditing()
+        updateColorFromDerived()
+      }
+      else {
+        console.warn("%o has a color-derived-from-id of a non-existent g-color-in-palette: %s",self,this.colorDerivedFromId)
+      }
     }
   }
 

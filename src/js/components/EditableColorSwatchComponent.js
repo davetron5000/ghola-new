@@ -6,6 +6,7 @@ import HasEvents from "../brutaldom/HasEvents"
 import IsCreatable from "../brutaldom/IsCreatable"
 
 class EditableColorSwatchComponent extends HTMLElement {
+  static DEBUG_EVENTS = true
   static attributeListeners = {
     "hex-code": {
       attributeName: "color",
@@ -38,7 +39,7 @@ class EditableColorSwatchComponent extends HTMLElement {
     this.$input = locator.$e("g-color-swatch-input")
     this.$input.onValueChanged( (event) => this.$colorName.updateColor(Color.fromString(event.detail)) )
     this.$input.onValueChanged( (event) => this.$hexCode.updateColor(Color.fromString(event.detail)) )
-    this.$input.onValueChanged( (event) => this.dispatchHexCodeChanged(Color.fromString(event.detail)) )
+    this.$input.onValueChanged( (event) => this.dispatchHexCodeChanged(Color.fromString(event.detail)), { debounce: 100 } )
 
     this.$inputLabel = locator.$e("label")
   }
